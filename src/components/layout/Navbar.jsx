@@ -49,7 +49,6 @@ const Navbar = (props) => {
             onClick = { props.toggleDarkMode }
           >
             { props.darkMode ? <NightsStayIcon /> : <Brightness5Icon /> }
-            { console.log(props) }
           </IconButton>
           <AccountBoxRoundedIcon fontSize = "large" />
         </Toolbar>

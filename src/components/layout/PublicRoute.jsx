@@ -6,10 +6,10 @@ const PublicRoute = ({component: Component, restricted, ...rest}) => {
   const isLogin = rest.logginIn;
 
   return (
-      <Route {...rest} render={props => (
+      <Route {...rest} render = { props => (
           isLogin && restricted
-            ? <Redirect to="/" />
-            : <Component {...props} />
+            ? <Redirect to = "/" />
+            : <Component { ...props } />
       )} />
   );
 };

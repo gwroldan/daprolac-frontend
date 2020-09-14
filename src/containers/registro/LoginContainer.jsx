@@ -3,9 +3,11 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { connect } from 'react-redux';
-import { login, logout } from '../store/actions/usuariosAction';
+import { login, logout } from '../../store/actions/usuariosAction';
 
-import Login from '../components/registro/Login';
+import Login from '../../components/registro/Login';
+import Spinner from "../../components/utils/Spinner";
+import Error from "../../components/utils/Error";
 
 class LoginContainer extends Component {
   constructor(props) {
@@ -27,7 +29,7 @@ class LoginContainer extends Component {
     this.props.login(email, password);
 
     if (this.props.logginIn) {
-      this.props.history.push("/");
+      this.props.history.go('/')
     }
   }
 
@@ -45,7 +47,13 @@ class LoginContainer extends Component {
           .required('Ingresar contraseña'),
     };
 
-    console.log(this.state);
+    if (this.props.loading) {
+      return <Spinner />
+    }
+
+    if (this.props.error) {
+      return <Error mensaje = { this.props.error } />;
+    }
 
     return (
       <Formik
@@ -53,12 +61,14 @@ class LoginContainer extends Component {
         validationSchema = { Yup.object(schema) }
         onSubmit = { this.handleSubmit }
       >
-
-        { formik => {
-          return (
-              <Login formik = { formik } error = { (this.state.isSubmitted && !this.props.logginIn) } />
+        {
+          formik => (
+            <Login
+              formik = { formik }
+              error = { (this.state.isSubmitted && !this.props.logginIn) }
+            />
           )
-        }}
+        }
       </Formik>
     );
   }
@@ -66,7 +76,13 @@ class LoginContainer extends Component {
 
 const mapStateToProps = (state) => {
   const { loggingIn } = state.usuariosReducer;
-  return { loggingIn };
+  const { loading, error } = state.globalReducer;
+
+  return {
+    loggingIn,
+    loading,
+    error
+  };
 }
 
 const mapDispatchToProps = {

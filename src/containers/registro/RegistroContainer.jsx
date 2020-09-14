@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { connect } from 'react-redux';
-import { registerRequest } from "../store/actions/usuariosAction";
+import { registerRequest } from "../../store/actions/usuariosAction";
 
 import { Button } from "@material-ui/core";
 

@@ -1,10 +1,10 @@
 import { ERROR, LOADING, TOGGLE_DARK_MODE } from "../types";
 
 export const isLoading = (value) => (
-    {
-      type: LOADING,
-      payload: value
-    }
+  {
+    type: LOADING,
+    payload: value
+  }
 )
 
 export const isError = (error) => {

@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   REGISTER_REQUEST,
   LOGIN_REQUEST,
+  LOGOUT_REQUEST,
   GET_USUARIOS
 } from '../types/usuariosTypes';
 
@@ -52,7 +53,7 @@ export const logout = () => async (dispatch) => {
     dispatch(isLoading(false));
 
     dispatch({
-      type: GET_USUARIOS,
+      type: LOGOUT_REQUEST,
       payload: response.data.payload
     });
   } catch (err) {

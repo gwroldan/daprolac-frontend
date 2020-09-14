@@ -3,6 +3,7 @@ import {
   LOGIN_REQUEST,
   GET_USUARIOS
 } from '../types/usuariosTypes';
+import {GET_PROCESOS} from "../types/procesosTypes";
 
 const INITIAL_STATE = {
   usuario: {},
