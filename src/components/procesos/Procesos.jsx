@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Button, GridList, GridListTile, TextField, Typography } from "@material-ui/core";
+import { Button, GridList, TextField, Typography } from "@material-ui/core";
 import { useTheme, withWidth } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 

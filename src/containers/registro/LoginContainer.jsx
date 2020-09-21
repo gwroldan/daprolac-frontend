@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -12,7 +13,6 @@ import Error from "../../components/utils/Error";
 class LoginContainer extends Component {
   constructor(props) {
     super(props);
-    this.props.logout();
 
     this.state = {
       isSubmitted: false
@@ -27,10 +27,6 @@ class LoginContainer extends Component {
 
     const { email, password } = values;
     this.props.login(email, password);
-
-    if (this.props.logginIn) {
-      this.props.history.go('/')
-    }
   }
 
   render() {
@@ -53,6 +49,10 @@ class LoginContainer extends Component {
 
     if (this.props.error) {
       return <Error mensaje = { this.props.error } />;
+    }
+
+    if (this.props.logginIn) {
+      return <Redirect to = "/procesos" />
     }
 
     return (

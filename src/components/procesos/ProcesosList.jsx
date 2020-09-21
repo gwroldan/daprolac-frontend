@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 
-import { Card, CardContent, GridListTile, GridListTileBar, IconButton } from "@material-ui/core";
+import { GridListTile, GridListTileBar, IconButton } from "@material-ui/core";
 
 import DeleteIcon from "@material-ui/icons/Delete";
 

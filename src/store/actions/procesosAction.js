@@ -67,11 +67,8 @@ export const crearProceso = (proceso) => async (dispatch) => {
 }
 
 export const editarProceso = (idProceso, proceso) => async (dispatch) => {
-  dispatch(isLoading(true));
-
   try{
-    const response = await axios.put(`https://daprolac.herokuapp.com/api/v1/procesos/${proceso.id}`, proceso);
-    dispatch(isLoading(false));
+    const response = await axios.put(`https://daprolac.herokuapp.com/api/v1/procesos/${idProceso}`, proceso);
 
     dispatch({
       type: EDIT_PROCESO,
@@ -81,7 +78,6 @@ export const editarProceso = (idProceso, proceso) => async (dispatch) => {
       }
     });
   } catch (err) {
-    dispatch(isLoading(false));
     dispatch(isError(err));
   }
 }

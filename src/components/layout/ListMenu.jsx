@@ -1,17 +1,19 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-import { List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
+import { List, ListItem, ListItemIcon, ListItemText, Tooltip } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import CodeIcon from '@material-ui/icons/Code';
+import PersonIcon from '@material-ui/icons/Person';
 
 export const items = [
   { id: 1, label: "Procesos", link: "/procesos", icon: DynamicFeedIcon },
   { id: 2, label: "Tareas", link: "/tareas", icon: ListAltIcon },
-  { id: 3, label: "Datos", link: "/datos", icon: CodeIcon }
+  { id: 3, label: "Datos", link: "/datos", icon: CodeIcon },
+  { id: 4, label: "Usuarios", link: "/usuarios", icon: PersonIcon }
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -28,13 +30,15 @@ const ListMenu = () => {
     <Fragment >
       <List component = "nav" >
         { items.map( item => (
-            <Link to = "/procesos" key = { item.id } className = { classes.link } >
-              <ListItem button >
-                <ListItemIcon>
-                  <item.icon />
-                </ListItemIcon>
-                <ListItemText primary = { item.label } />
-              </ListItem>
+            <Link to = { item.link } key = { item.id } className = { classes.link } >
+              <Tooltip title = { item.label } placement = "right-end" arrow >
+                <ListItem button >
+                  <ListItemIcon>
+                    <item.icon />
+                  </ListItemIcon>
+                  <ListItemText primary = { item.label } />
+                </ListItem>
+              </Tooltip>
             </Link>
         )) }
       </List>

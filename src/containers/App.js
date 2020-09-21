@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@material-ui/core';
@@ -20,12 +20,13 @@ const App = (props) => (
     <CssBaseline />
     <BrowserRouter>
       <Switch>
-        {/*<PublicRoute exact path = "/login" restricted = {true} component = { LoginContainer } />*/}
-        {/*<PrivateRoute exact path = "/" component = { () => (<Layout><Usuarios /></Layout>) } />*/}
-        {/*<PrivateRoute exact path = "/procesos" component = { (props) => (<Layout><ProcesosContainer { ...props } /></Layout>) } />*/}
-        {/*<PrivateRoute exact path = "/procesos/:id" component = { (props) => (<Layout><ProcesoDetalleContainer { ...props } /></Layout>) } />*/}
-        <PublicRoute exact path = "/procesos" component = { () => (<Layout><ProcesosContainer { ...props } /></Layout>) } />
-        <PublicRoute exact path = "/procesos/:id" component = { (props) => (<Layout><ProcesoDetalleContainer { ...props } /></Layout>) } />
+        <PublicRoute exact path = "/login" restricted = { true } component = { LoginContainer } />
+        <PrivateRoute exact path = "/" component = { () => (<Layout></Layout>) } />
+        <PrivateRoute exact path = "/procesos" component = { (props) => (<Layout><ProcesosContainer { ...props } /></Layout>) } />
+        <PrivateRoute exact path = "/procesos/:id" component = { (props) => (<Layout><ProcesoDetalleContainer { ...props } /></Layout>) } />
+        <PrivateRoute exact path = "/tareas" component = { () => (<Layout></Layout>) } />
+        <PrivateRoute exact path = "/datos" component = { () => (<Layout></Layout>) } />
+        <PrivateRoute exact path = "/usuarios" component = { (props) => (<Layout><Usuarios /></Layout>) } />
         <Route exact path = "/registro" component = { RegistroContainer } />
       </Switch>
     </BrowserRouter>
