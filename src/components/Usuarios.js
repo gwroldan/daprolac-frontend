@@ -1,48 +1,33 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { getUsuarios } from '../store/actions/usuariosAction';
+import { fetchUsuarios, selectAllUsarios } from '../store/reducers/usuariosSlice';
 
 import Spinner from './utils/Spinner';
 import Error from './utils/Error'
 import UsuariosTabla from './UsuariosTabla';
 
-class Usuarios extends Component {
+const Usuarios = () => {
+  const dispatch = useDispatch();
+  const usuarios = useSelector(selectAllUsarios);
 
-  componentDidMount() {
-    if (!this.props.usuarios.length) {
-      this.props.getUsuarios();
+  const postStatus = useSelector((state) => state.usuarios.status);
+  const error = useSelector((state) => state.usuarios.error);
+
+  useEffect(() => {
+    if (postStatus === "idle") {
+      dispatch(fetchUsuarios());
     }
+  }, [postStatus, dispatch]);
+
+  if (postStatus === 'loading') {
+    return <Spinner />;
+  }
+  if (postStatus === 'failed') {
+    return <Error mensaje = { error } />;
   }
 
-  cargarContenido = () => {
-    if (this.props.loading) {
-      return <Spinner />;
-    }
-
-    if (this.props.error) {
-      return <Error mensaje = { this.props.error } />;
-    }
-
-    return <UsuariosTabla />;
-  }
-
-  render() {
-    return (
-      <div>
-        { this.cargarContenido() }
-      </div>
-    )
-  }
+  return <UsuariosTabla usuarios = { usuarios } />;
 };
 
-const mapStateToProps = (reducers) => {
-  return {
-    error: reducers.globalReducer.error,
-    loading: reducers.globalReducer.loading,
-    usuarios: reducers.usuariosReducer.usuarios
-  };
-}
-const mapDispatchToProps = { getUsuarios };
-
-export default connect(mapStateToProps, mapDispatchToProps)(Usuarios);
+export default Usuarios;

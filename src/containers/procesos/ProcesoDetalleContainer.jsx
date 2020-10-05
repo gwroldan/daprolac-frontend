@@ -1,51 +1,34 @@
-import React, { Component} from "react";
-import { connect } from "react-redux";
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import Spinner from "../../components/utils/Spinner";
-import Error from "../../components/utils/Error";
 import ProcesoDetalle from "../../components/procesos/ProcesoDetalle";
-import { getProceso, editarProceso } from "../../store/actions/procesosAction";
-import { editarTarea } from "../../store/actions/tareasActions";
+import {
+  selectTareasByProcesoId,
+  selectProcesoById,
+  updateProceso } from '../../store/reducers/procesosSlice';
+import { updateTarea } from '../../store/reducers/tareasSlice';
+import { addNewTareaProceso } from '../../store/actions/index';
 
-class ProcesoDetalleContainer extends Component {
-  async componentDidMount() {
-    await this.props.getProceso(this.props.match.params.id);
-  }
+const ProcesoDetalleContainer = (props) => {
+  const dispatch = useDispatch();
 
-  render() {
-    if (this.props.loading || !Object.keys(this.props.proceso).length) {
-      return <Spinner />
-    }
+  const procesoId = props.match.params.id;
+  const proceso = useSelector(state => selectProcesoById(state, procesoId));
+  const tareas = useSelector(selectTareasByProcesoId(procesoId));
 
-    if (this.props.error) {
-      return <Error mensaje = { this.props.error } />;
-    }
+  const editarProceso = async (proceso) => await dispatch(updateProceso(proceso));
+  const editarTarea = async (tarea) => await dispatch(updateTarea(tarea));
+  const agregarNuevaTareaProceso = (tarea) => dispatch(addNewTareaProceso(tarea));
 
-    return (
-      <ProcesoDetalle
-        proceso = { this.props.proceso }
-        editarProceso = { this.props.editarProceso }
-        editarTarea = { this.props.editarTarea }
-      />
-    );
-  }
+  return (
+    <ProcesoDetalle
+      proceso = { proceso }
+      tareas = { tareas }
+      editarProceso = { editarProceso }
+      editarTarea = { editarTarea }
+      addNewTareaProceso = { agregarNuevaTareaProceso }
+    />
+  );
 }
 
-const mapStateToProps = (state) => {
-  const { proceso } = state.procesosReducer;
-  const { loading, error } = state.globalReducer;
-
-  return {
-    proceso,
-    loading,
-    error
-  };
-}
-
-const mapDispatchToProps = {
-  getProceso,
-  editarProceso,
-  editarTarea
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProcesoDetalleContainer);
+export default ProcesoDetalleContainer;

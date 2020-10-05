@@ -63,7 +63,7 @@ const TareasProcesoList = ({ tarea, ...props }) => {
 
   const [ state, setState ] = useState({
     elevation: INITIAL_ELEVATION,
-    expanded: tarea.datos.length,
+    expanded: tarea.datos ? !!tarea.datos.length : false,
     editarTarea: false,
     nombre: tarea.nombre,
     observaciones: tarea.observaciones
@@ -85,17 +85,16 @@ const TareasProcesoList = ({ tarea, ...props }) => {
       ...state,
       elevation: INITIAL_ELEVATION,
       editarTarea: !state.editarTarea,
-      nombre: state.nombre,
-      observaciones: state.observaciones
     });
   }
 
   const handleEditarTarea = async (idTarea) => {
-    await props.editarTarea(idTarea, {
+    await props.editarTarea({
+      id: idTarea,
       nombre: state.nombre,
       observaciones: state.observaciones
-          ? state.observaciones
-          : ''
+        ? state.observaciones
+        : ''
     });
     handleHabilitaEditTarea();
   }
@@ -199,12 +198,12 @@ const TareasProcesoList = ({ tarea, ...props }) => {
           }
           title = {
             <Typography gutterBottom variant = "h6">
-              { state.nombre }
+              { tarea.nombre }
             </Typography>
           }
           subheader = {
             <Typography variant = "body2" color = "textSecondary" >
-              { state.observaciones }
+              { tarea.observaciones }
             </Typography>
           }
         />
@@ -224,7 +223,7 @@ const TareasProcesoList = ({ tarea, ...props }) => {
           </IconButton>
         </CardActions>
         <Collapse in = { state.expanded } timeout="auto" unmountOnExit >
-          { renderDatosTarea() }
+          { tarea.datos && renderDatosTarea() }
         </Collapse>
       </Card>
 

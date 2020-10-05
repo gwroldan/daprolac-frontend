@@ -96,10 +96,10 @@ const Login = ({ formik, error }) => {
           />
           <TextField
             margin = "normal"
-            name = "password"
+            name = "clave"
             label = "Contraseña"
             type = { showPassword ? "text" : "password"}
-            id = "password"
+            id = "clave"
             color = "secondary"
             InputProps = {{
               startAdornment: (
@@ -118,9 +118,9 @@ const Login = ({ formik, error }) => {
                 </InputAdornment>
               )
             }}
-            { ...formik.getFieldProps('password') }
-            error = { !!(formik.touched.password && formik.errors.password) }
-            helperText = { formik.touched.password && formik.errors.password ? formik.errors.password : '' }
+            { ...formik.getFieldProps('clave') }
+            error = { !!(formik.touched.clave && formik.errors.clave) }
+            helperText = { formik.touched.clave && formik.errors.clave ? formik.errors.clave : '' }
             required
             fullWidth
           />

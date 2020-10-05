@@ -1,5 +1,4 @@
-import React from 'react';
-import { connect } from 'react-redux'
+import React, { useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@material-ui/core';
 
@@ -15,24 +14,33 @@ import Usuarios from '../components/Usuarios';
 
 import { customTheme, customDarkTheme } from '../styles/themeConfig';
 
-const App = (props) => (
-  <ThemeProvider theme = { props.darkMode ? customDarkTheme : customTheme }>
-    <CssBaseline />
-    <BrowserRouter>
-      <Switch>
-        <PublicRoute exact path = "/login" restricted = { true } component = { LoginContainer } />
-        <PrivateRoute exact path = "/" component = { () => (<Layout></Layout>) } />
-        <PrivateRoute exact path = "/procesos" component = { (props) => (<Layout><ProcesosContainer { ...props } /></Layout>) } />
-        <PrivateRoute exact path = "/procesos/:id" component = { (props) => (<Layout><ProcesoDetalleContainer { ...props } /></Layout>) } />
-        <PrivateRoute exact path = "/tareas" component = { () => (<Layout></Layout>) } />
-        <PrivateRoute exact path = "/datos" component = { () => (<Layout></Layout>) } />
-        <PrivateRoute exact path = "/usuarios" component = { (props) => (<Layout><Usuarios /></Layout>) } />
-        <Route exact path = "/registro" component = { RegistroContainer } />
-      </Switch>
-    </BrowserRouter>
-  </ThemeProvider>
-);
+const App = () => {
+  const [isLight, setIsLight] = useState(true);
+  const themeMode = isLight ? customTheme : customDarkTheme;
 
-const mapStateToProps = (reducers) => ({ darkMode: reducers.globalReducer.darkMode })
+  const toggleTheme = () => {
+    setIsLight(!isLight)
+  }
 
-export default connect(mapStateToProps)(App);
+  return (
+    <ThemeProvider theme={themeMode} >
+      <CssBaseline/>
+      <BrowserRouter>
+        <Switch>
+          <PublicRoute exact path="/login" restricted={true} component={LoginContainer}/>
+          <Layout isLight={isLight} toggleTheme={toggleTheme}>
+            <PrivateRoute exact path="/" component={() => (null)}/>
+            <PrivateRoute exact path="/procesos" component={(props) => (<ProcesosContainer {...props} />)}/>
+            <PrivateRoute exact path="/procesos/:id" component={(props) => (<ProcesoDetalleContainer {...props} />)}/>
+            <PrivateRoute exact path="/tareas" component={() => (null)}/>
+            <PrivateRoute exact path="/datos" component={() => (null)}/>
+            <PrivateRoute exact path="/usuarios" component={(props) => (<Usuarios/>)}/>
+            <Route exact path="/registro" component={RegistroContainer}/>
+          </Layout>
+        </Switch>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+};
+
+export default App;

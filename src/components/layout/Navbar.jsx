@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
 
 import { AppBar, Toolbar, Typography, IconButton } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -8,8 +7,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountBoxRoundedIcon from '@material-ui/icons/AccountBoxRounded';
 import Brightness5Icon from '@material-ui/icons/Brightness5';
 import NightsStayIcon from '@material-ui/icons/NightsStay';
-
-import { toggleDarkMode } from "../../store/actions";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -23,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Navbar = (props) => {
+const Navbar = ({ isLight, toggleTheme, ...props }) => {
   const classes = useStyles();
 
   return (
@@ -46,9 +43,9 @@ const Navbar = (props) => {
             color = "inherit"
             aria-label = "switch-mode"
             edge = "start"
-            onClick = { props.toggleDarkMode }
+            onClick = { toggleTheme }
           >
-            { props.darkMode ? <NightsStayIcon /> : <Brightness5Icon /> }
+            { isLight ? <Brightness5Icon /> : <NightsStayIcon /> }
           </IconButton>
           <AccountBoxRoundedIcon fontSize = "large" />
         </Toolbar>
@@ -57,7 +54,4 @@ const Navbar = (props) => {
   )
 }
 
-const mapStateToProps = (reducers) => ({ darkMode: reducers.globalReducer.darkMode });
-const mapDispatchToProps = { toggleDarkMode }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+export default Navbar;

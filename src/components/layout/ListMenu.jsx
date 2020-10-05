@@ -8,12 +8,14 @@ import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import CodeIcon from '@material-ui/icons/Code';
 import PersonIcon from '@material-ui/icons/Person';
+import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 
 export const items = [
   { id: 1, label: "Procesos", link: "/procesos", icon: DynamicFeedIcon },
   { id: 2, label: "Tareas", link: "/tareas", icon: ListAltIcon },
   { id: 3, label: "Datos", link: "/datos", icon: CodeIcon },
-  { id: 4, label: "Usuarios", link: "/usuarios", icon: PersonIcon }
+  { id: 4, label: "Usuarios", link: "/usuarios", icon: PersonIcon },
+  { id: 5, label: "Ordenes", link: "/ordenes", icon: DeveloperBoardIcon }
 ];
 
 const useStyles = makeStyles(theme => ({

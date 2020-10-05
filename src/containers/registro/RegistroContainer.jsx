@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 
-import { connect } from 'react-redux';
-import { registerRequest } from "../../store/actions/usuariosAction";
+import { useDispatch } from 'react-redux';
+import { addNewUsuario } from "../../store/reducers/usuariosSlice";
 
 import { Button } from "@material-ui/core";
 
 const RegistroContainer = props => {
+  const dispatch = useDispatch();
+
   const [form, setValues] = useState({
     nombre: '',
     apellido: '',
@@ -20,9 +22,9 @@ const RegistroContainer = props => {
     });
   }
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     event.preventDefault();
-    props.registerRequest(form);
+    await dispatch(addNewUsuario(form));
   }
 
   return (
@@ -74,6 +76,4 @@ const RegistroContainer = props => {
   );
 }
 
-const mapDispatchToProps = { registerRequest }
-
-export default connect(null, mapDispatchToProps)(RegistroContainer);
+export default RegistroContainer;

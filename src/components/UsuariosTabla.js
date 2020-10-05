@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux';
 
 const UsuariosTabla = (props) => {
 
@@ -27,6 +26,4 @@ const UsuariosTabla = (props) => {
   )
 }
 
-const mapStateToProps = (reducers) => reducers.usuariosReducer;
-
-export default connect(mapStateToProps)(UsuariosTabla);
+export default UsuariosTabla;

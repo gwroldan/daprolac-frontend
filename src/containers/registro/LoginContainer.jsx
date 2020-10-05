@@ -1,93 +1,63 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { connect } from 'react-redux';
-import { login, logout } from '../../store/actions/usuariosAction';
+import { useSelector, useDispatch } from 'react-redux';
+import { loginUsuario } from '../../store/reducers/usuariosSlice';
 
 import Login from '../../components/registro/Login';
 import Spinner from "../../components/utils/Spinner";
 import Error from "../../components/utils/Error";
 
-class LoginContainer extends Component {
-  constructor(props) {
-    super(props);
+const LoginContainer = () => {
+  const dispatch = useDispatch();
+  const [ isSubmitted, setIsSubmitted ] = useState(false);
 
-    this.state = {
-      isSubmitted: false
-    }
-  }
+  const postStatus = useSelector((state) => state.usuarios.status);
+  const error = useSelector((state) => state.usuarios.error);
+  const auth = useSelector((state) => state.usuarios.auth);
 
-  handleSubmit = (values) => {
-    this.setState({
-      ...this.state,
-      isSubmitted: true
-    });
-
-    const { email, password } = values;
-    this.props.login(email, password);
-  }
-
-  render() {
-    const values = {
-      email: '',
-      password: '',
-    };
-
-    const schema = {
-      email: Yup.string()
-          .email('Correo electronico invalido')
-          .required('Ingresar email'),
-      password: Yup.string()
-          .required('Ingresar contraseña'),
-    };
-
-    if (this.props.loading) {
-      return <Spinner />
-    }
-
-    if (this.props.error) {
-      return <Error mensaje = { this.props.error } />;
-    }
-
-    if (this.props.logginIn) {
-      return <Redirect to = "/procesos" />
-    }
-
-    return (
-      <Formik
-        initialValues = { values }
-        validationSchema = { Yup.object(schema) }
-        onSubmit = { this.handleSubmit }
-      >
-        {
-          formik => (
-            <Login
-              formik = { formik }
-              error = { (this.state.isSubmitted && !this.props.logginIn) }
-            />
-          )
-        }
-      </Formik>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  const { loggingIn } = state.usuariosReducer;
-  const { loading, error } = state.globalReducer;
-
-  return {
-    loggingIn,
-    loading,
-    error
+  const values = {
+    email: '',
+    clave: '',
   };
+
+  const schema = {
+    email: Yup.string()
+        .email('Correo electronico invalido')
+        .required('Ingresar email'),
+    clave: Yup.string()
+        .required('Ingresar contraseña'),
+  };
+
+  const handleSubmit = async (credentials) => {
+    setIsSubmitted(true);
+    await dispatch(loginUsuario(credentials));
+  }
+
+  if (postStatus === 'loading') {
+    return <Spinner />;
+  }
+  if (postStatus === 'failed') {
+    return <Error mensaje = { error } />;
+  }
+
+  return (
+    <Formik
+      initialValues = { values }
+      validationSchema = { Yup.object(schema) }
+      onSubmit = { handleSubmit }
+    >
+      {
+        formik => (
+          <Login
+            formik = { formik }
+            error = { (isSubmitted && !auth) }
+          />
+        )
+      }
+    </Formik>
+  );
 }
 
-const mapDispatchToProps = {
-  login,
-  logout
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
+export default LoginContainer;

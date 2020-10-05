@@ -1,25 +1,48 @@
-import { ERROR, LOADING, TOGGLE_DARK_MODE } from "../types";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import axios from "axios";
 
-export const isLoading = (value) => (
-  {
-    type: LOADING,
-    payload: value
+export const addNewTareaProceso = createAsyncThunk("tareas/addNewTareaProceso",async (tarea) => {
+  const {
+    nombre,
+    observaciones,
+    idProceso,
+    idTareaAntecesora,
+    diasAntecesora,
+    horasAntecesora,
+    minutosAntecesora } = tarea;
+
+  const tareaPost = {
+    nombre,
+    observaciones,
+    proceso: {
+      idProceso
+    }
   }
-)
 
-export const isError = (error) => {
-  console.log('Error: ', error.message);
+  let tareaAntecesora = {};
+  if (idTareaAntecesora !== null) {
+    tareaAntecesora = {
+      idTareaAntecesora,
+      diasAntecesora,
+      horasAntecesora,
+      minutosAntecesora
+    }
+  }
+
+  if (Object.keys(tareaAntecesora).length) {
+    tareaPost.proceso.tareaAntecesora = tareaAntecesora;
+  }
+
+  const response = await axios.post(`https://daprolac.herokuapp.com/api/v1/tareas`, tareaPost);
 
   return {
-    type: ERROR,
-    payload: 'Algo salio mal, intente mas tarde.'
+    id: response.data.payload.id,
+    nombre,
+    observaciones,
+    idProceso,
+    idTareaAntecesora,
+    diasAntecesora,
+    horasAntecesora,
+    minutosAntecesora
   }
-}
-
-export const toggleDarkMode = () => (dispatch) => {
-  dispatch({
-    type: TOGGLE_DARK_MODE
-  });
-}
-
-
+});

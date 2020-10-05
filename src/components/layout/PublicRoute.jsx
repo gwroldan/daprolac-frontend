@@ -1,22 +1,17 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const PublicRoute = ({component: Component, restricted, ...rest}) => {
-  const isLogin = rest.logginIn;
+  const auth = useSelector((state) => state.usuarios.auth);
 
   return (
-      <Route {...rest} render = { props => (
-          isLogin && restricted
-            ? <Redirect to = "/" />
-            : <Component { ...props } />
-      )} />
+    <Route {...rest} render = { props => (
+      auth && restricted
+        ? <Redirect to = "/procesos" />
+        : <Component { ...props } />
+    )} />
   );
 };
 
-const mapStateToProps = (state) => {
-  const { logginIn } = state.usuariosReducer;
-  return { logginIn };
-}
-
-export default connect(mapStateToProps)(PublicRoute);
+export default PublicRoute;

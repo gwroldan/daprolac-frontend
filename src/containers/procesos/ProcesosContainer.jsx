@@ -1,5 +1,11 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchProcesos,
+  addNewProceso,
+  deleteProceso,
+  selectAllProcesos
+} from "../../store/reducers/procesosSlice";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -9,99 +15,84 @@ import { withTheme } from "@material-ui/core/styles";
 
 import Spinner from "../../components/utils/Spinner";
 import Error from "../../components/utils/Error";
-import Procesos from '../../components/procesos/Procesos';
-import { getProcesos, crearProceso, borrarProceso } from '../../store/actions/procesosAction';
+import Procesos from "../../components/procesos/Procesos";
 
-class ProcesosContainer extends Component {
+const ProcesosContainer = (props) => {
+  const dispatch = useDispatch();
+  const procesos = useSelector(selectAllProcesos);
 
-  componentDidMount() {
-    this.props.getProcesos();
-  }
+  const postStatus = useSelector((state) => state.procesos.status);
+  const error = useSelector((state) => state.procesos.error);
 
-  crearProceso = async (values) => {
-    await this.props.crearProceso(values);
+  useEffect(() => {
+    if (postStatus === "idle") {
+      dispatch(fetchProcesos());
+    }
+  }, [postStatus, dispatch]);
 
-    if (!this.props.error) {
-      Swal.fire('Se agregó el proceso', '', 'success');
+  const crearProceso = async (proceso, {resetForm}) => {
+    dispatch(addNewProceso(proceso));
+
+    if (!error) {
+      await Swal.fire('Se agregó el proceso', '', 'success');
+      resetForm({values: ''});
     } else {
-      Swal.fire('Hubo un error', this.props.error, 'error');
+      await Swal.fire('Hubo un error', this.props.error, 'error');
     }
   }
 
-  borrarProceso = async (idProceso) => {
+  const borrarProceso = async (idProceso) => {
 
     const result = await Swal.fire({
-        title: "¿Seguro desea eliminar el proceso?",
-        text: "No hay vuelta atras!",
-        icon: 'question',
-        confirmButtonText: "Si, Eliminar",
-        cancelButtonText: "No, Cancelar",
-        showCancelButton: true,
-        confirmButtonColor: this.props.theme.palette.secondary.dark,
-        cancelButtonColor: this.props.theme.palette.error.dark
-      });
+      title: "¿Seguro desea eliminar el proceso?",
+      text: "No hay vuelta atras!",
+      icon: 'question',
+      confirmButtonText: "Si, Eliminar",
+      cancelButtonText: "No, Cancelar",
+      showCancelButton: true,
+      confirmButtonColor: props.theme.palette.secondary.dark,
+      cancelButtonColor: props.theme.palette.error.dark
+    });
 
     if (result.value) {
-      await this.props.borrarProceso(idProceso);
+      await dispatch(deleteProceso(idProceso));
 
-      if (!this.props.error) {
-        Swal.fire('Proceso eliminado', '', 'success');
+      if (!error) {
+        await Swal.fire('Proceso eliminado', '', 'success');
       } else {
-        Swal.fire('Hubo un error', this.props.error, 'error');
+        await Swal.fire('Hubo un error', error, 'error');
       }
     }
   }
 
-  render() {
-    const values = { producto: '' };
-    const schema = {
-      producto: Yup.string()
-          .required('Debe ingresar el nombre del proceso')
-    };
+  if (postStatus === 'loading') {
+    return <Spinner />;
+  }
+  if (postStatus === 'failed') {
+    return <Error mensaje = { error } />;
+  }
 
-    if (this.props.loading) {
-      return <Spinner />
-    }
-
-    if (this.props.error) {
-      return <Error mensaje = { this.props.error } />;
-    }
-
-    return (
+  return (
+    <React.Fragment>
       <Formik
-        initialValues = { values }
-        validationSchema = { Yup.object(schema) }
-        onSubmit = { this.crearProceso }
+        initialValues = {{ producto: '' }}
+        validationSchema = { Yup.object({
+          producto: Yup.string().required('Debe ingresar el nombre del proceso')
+        })}
+        onSubmit = { crearProceso }
       >
         {
           formik => (
             <Procesos
               formik = { formik }
-              procesos = { this.props.procesos }
-              borrarProceso = { this.borrarProceso }
+              procesos = { procesos }
+              borrarProceso = { borrarProceso }
             />
           )
         }
       </Formik>
-    );
-  }
+    </React.Fragment>
+  );
 }
 
-const mapStateToProps = (state) => {
-  const { procesos } = state.procesosReducer;
-  const { loading, error } = state.globalReducer;
-
-  return {
-    procesos,
-    loading,
-    error
-  };
-}
-
-const mapDispatchToProps = {
-  getProcesos,
-  crearProceso,
-  borrarProceso
-}
-
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ProcesosContainer));
+export default withTheme(ProcesosContainer);

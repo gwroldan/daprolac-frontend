@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Layout = (props) => {
+const Layout = ({ isLight, toggleTheme, ...props }) => {
   const classes = useStyles();
   const [ show, setShow ] = useState(false);
 
@@ -26,7 +26,10 @@ const Layout = (props) => {
 
   return (
     <div className = { classes.root } >
-      <Navbar handleShow = { handleShow } />
+      <Navbar
+          handleShow = { handleShow }
+          isLight = { isLight }
+          toggleTheme = { toggleTheme } />
       <MenuDrawer variant = "permanent" open = { show } />
       <main className = { classes.content } >
         <div className = { classes.offset } />
