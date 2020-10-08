@@ -1,5 +1,6 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
 import { fetchProcesos } from "./procesosSlice";
+import { addNewDatoTarea, deleteDatoTarea } from "../actions/actionsShared";
 
 const datosAdapter = createEntityAdapter();
 
@@ -11,6 +12,13 @@ export const slice = createSlice({
     [fetchProcesos.fulfilled]: (state, action) => {
       const datos = action.payload.datos ? action.payload.datos: {}
       datosAdapter.upsertMany(state, datos);
+    },
+    [addNewDatoTarea.fulfilled]: (state, action) => {
+      const { id, nombre, unidadMedida, tipo, minimo, maximo, opciones } = action.payload;
+      datosAdapter.addOne(state, { id, nombre, unidadMedida, tipo, minimo, maximo, opciones });
+    },
+    [deleteDatoTarea.fulfilled]: (state, action) => {
+      datosAdapter.removeOne(state, action.payload.id);
     }
   }
 });

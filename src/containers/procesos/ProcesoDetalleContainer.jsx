@@ -7,7 +7,7 @@ import {
   selectProcesoById,
   updateProceso } from '../../store/reducers/procesosSlice';
 import { updateTarea } from '../../store/reducers/tareasSlice';
-import { addNewTareaProceso } from '../../store/actions/index';
+import { deleteDatoTarea, deleteTareaProceso } from '../../store/actions/actionsShared';
 
 const ProcesoDetalleContainer = (props) => {
   const dispatch = useDispatch();
@@ -16,9 +16,11 @@ const ProcesoDetalleContainer = (props) => {
   const proceso = useSelector(state => selectProcesoById(state, procesoId));
   const tareas = useSelector(selectTareasByProcesoId(procesoId));
 
-  const editarProceso = async (proceso) => await dispatch(updateProceso(proceso));
-  const editarTarea = async (tarea) => await dispatch(updateTarea(tarea));
-  const agregarNuevaTareaProceso = (tarea) => dispatch(addNewTareaProceso(tarea));
+  const editarProceso = (proceso) => dispatch(updateProceso(proceso));
+  const editarTarea = (tarea) => dispatch(updateTarea(tarea));
+
+  const deleteDato = (idDato) => dispatch(deleteDatoTarea(idDato));
+  const deleteTarea = (idTarea) => dispatch(deleteTareaProceso(idTarea));
 
   return (
     <ProcesoDetalle
@@ -26,7 +28,8 @@ const ProcesoDetalleContainer = (props) => {
       tareas = { tareas }
       editarProceso = { editarProceso }
       editarTarea = { editarTarea }
-      addNewTareaProceso = { agregarNuevaTareaProceso }
+      deleteDato = { deleteDato }
+      deleteTarea = { deleteTarea }
     />
   );
 }

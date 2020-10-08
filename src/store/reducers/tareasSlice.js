@@ -2,7 +2,7 @@ import { createEntityAdapter, createSlice, createAsyncThunk } from "@reduxjs/too
 import axios from "axios";
 
 import { fetchProcesos } from "./procesosSlice";
-import { addNewTareaProceso } from "../actions";
+import {addNewDatoTarea, addNewTareaProceso, deleteTareaProceso} from "../actions/actionsShared";
 
 const tareasAdapter = createEntityAdapter();
 
@@ -39,6 +39,13 @@ export const slice = createSlice({
     },
     [addNewTareaProceso.rejected]: (state, action) => {
       console.log(action.error.message);
+    },
+    [addNewDatoTarea.fulfilled]: (state, action) => {
+      const { id, idTarea } = action.payload;
+      state.entities[idTarea].datos.push(id);
+    },
+    [deleteTareaProceso.fulfilled]: (state, action) => {
+      tareasAdapter.removeOne(state, action.payload.id);
     }
   }
 });

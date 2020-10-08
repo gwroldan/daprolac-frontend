@@ -8,7 +8,7 @@ import axios from 'axios';
 import { normalize } from 'normalizr';
 
 import { procesoEntity } from '../schemas';
-import { addNewTareaProceso } from "../actions";
+import { addNewTareaProceso } from "../actions/actionsShared";
 
 const procesosAdapter = createEntityAdapter();
 
@@ -113,9 +113,10 @@ export const selectTareasByProcesoId = (idProceso) =>
         (state) => selectProcesoById(state, idProceso),
         (state) => state.tareas.ids.map((id) => state.tareas.entities[id]),
         (state) => state.procesosTareas.ids.map((id) => state.procesosTareas.entities[id]),
-        (state) => state.datos.ids.map((id) => state.datos.entities[id])
+        (state) => state.datos.ids.map((id) => state.datos.entities[id]),
+        (state) => state.tareasDatos.ids.map((id) => state.tareasDatos.entities[id])
       ],
-      (proceso, tareas, tareasProceso, datos) => {
+      (proceso, tareas, tareasProceso, datos, tareasDatos) => {
         let tareasProc = tareasProceso.filter(tarea => parseInt(tarea.idProceso) === parseInt(idProceso));
         tareasProc = sortTareas(tareasProc);
 
@@ -129,7 +130,17 @@ export const selectTareasByProcesoId = (idProceso) =>
           const tareaOrder = { ...tarea, proceso_tarea: tareasProc[idxOrder] };
 
           if (tareaOrder.datos && tareaOrder.datos.length) {
-            tareaOrder.datos = datos.filter( dato => tareaOrder.datos.includes(dato.id));
+            const datosComplete = [];
+            const datosU = datos.filter( dato => tareaOrder.datos.includes(dato.id));
+            datosU.forEach( dato => {
+              const tarea_dato = tareasDatos
+                  .filter(tD => parseInt(tD.idTarea) === parseInt(tarea.id) && parseInt(tD.idDato) === parseInt(dato.id))
+                  .pop();
+              const datoOrder = { ...dato, tarea_dato: tarea_dato }
+
+              datosComplete.push(datoOrder)
+            })
+            tareaOrder.datos = datosComplete;
           }
 
           tareasComplete[idxOrder] = tareaOrder;

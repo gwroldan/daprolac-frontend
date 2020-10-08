@@ -1,15 +1,14 @@
 import React, { Fragment, useState } from "react";
 
-import {Button, Modal, TextField, Typography, useTheme} from "@material-ui/core";
-import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot, TimelineOppositeContent } from '@material-ui/lab';
+import { Button, TextField, Typography, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-import ScheduleIcon from '@material-ui/icons/Schedule';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import TareasProcesoList from "../tareas/TareasProcesoList";
+import TareaAddEditContainer from "../../containers/tareas/TareaAddEditContainer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,12 +23,6 @@ const useStyles = makeStyles(theme => ({
     padding: 8,
     height: "100%",
     marginRight: 8
-  },
-  paper: {
-    position: 'absolute',
-    backgroundColor: theme.palette.background,
-    borderRadius: theme.spacing(),
-    outline: 'none'
   },
   cardContainer1: {
     backgroundColor: "white",
@@ -48,21 +41,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary
   },
-  timeline: {
-    transform: "rotate(-90deg)",
-    height: 90,
-  },
-  timelineContentContainer: {
-    textAlign: "left"
-  },
-  timelineContent: {
-    display: "inline-block",
-    transform: "rotate(90deg)",
-    textAlign: "center",
-  },
-  timelineIcon: {
-    transform: "rotate(-90deg)"
-  },
   agregarTarea: {
     minHeight: 250,
     width: 250,
@@ -77,13 +55,7 @@ const ProcesoDetalle = ({ proceso, tareas, ...props }) => {
   const [ state, setState ] = useState({
     agregarTarea: false,
     editarProceso: false,
-    producto: proceso.producto,
-    nombre: '',
-    observaciones: '',
-    idTareaAntecesora: null,
-    diasAntecesora: 2,
-    horasAntecesora: 1,
-    minutosAntecesora: 20
+    producto: proceso.producto
   })
 
   const handleEditAtributos = (event) => {
@@ -122,23 +94,8 @@ const ProcesoDetalle = ({ proceso, tareas, ...props }) => {
   const handleHabilitaAddTarea = () => {
     setState({
       ...state,
-      agregarTarea: !state.agregarTarea,
-      nombre: '',
-      observaciones: ''
+      agregarTarea: !state.agregarTarea
     });
-  }
-
-  const handleAddTarea = async () => {
-    await props.addNewTareaProceso({
-      nombre: state.nombre,
-      observaciones: state.observaciones,
-      idProceso: proceso.id,
-      idTareaAntecesora: tareas.length ? tareas[tareas.length - 1].id : null,
-      diasAntecesora: tareas.length ? state.diasAntecesora : null,
-      horasAntecesora: tareas.length ? state.horasAntecesora : null,
-      minutosAntecesora: tareas.length ? state.minutosAntecesora : null
-    });
-    handleHabilitaAddTarea();
   }
 
   const renderTitleProceso = () => {
@@ -177,99 +134,11 @@ const ProcesoDetalle = ({ proceso, tareas, ...props }) => {
     )
   }
 
-  const renderTimeLine = () => {
-    if (!tareas || (tareas && tareas.length <= 1)) {
-      return null;
-    }
-
-    return (
-      <Timeline align = "right" className = { classes.timeline } >
-        {
-          tareas.map( tarea =>
-            <TimelineItem key = { tarea.id } >
-              <TimelineOppositeContent >
-                <Typography variant="body2" color="textSecondary" className = { classes.timelineContent } >
-                  { tarea.proceso_tarea.diasAntecesora
-                      ? `${tarea.proceso_tarea.diasAntecesora}D 
-                    ${tarea.proceso_tarea.horasAntecesora}H 
-                    ${tarea.proceso_tarea.minutosAntecesora}M`
-                      : `0D 0H 0M`
-                  }
-                </Typography>
-              </TimelineOppositeContent>
-              <TimelineSeparator >
-                <TimelineDot color = "secondary" >
-                  <ScheduleIcon />
-                </TimelineDot>
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent />
-            </TimelineItem>
-          )
-        }
-      </Timeline>
-    )
-  }
-
-  const renderAddTareaProceso = () => {
-    return (
-        <Modal
-          open = { state.agregarTarea }
-          onClose = { handleHabilitaAddTarea }
-          style = {{
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          <div className = { classes.paper } >
-            <TextField
-                autoFocus
-                fullWidth
-                autoComplete = "off"
-                margin = "none"
-                name = "nombre"
-                variant = "outlined"
-                className = { classes.controlEdit }
-                defaultValue = { state.nombre }
-                onChange = { handleEditAtributos }
-                onFocus = { event => event.target.select() }
-            />
-            <TextField
-                multiline
-                fullWidth
-                rows = {5}
-                autoComplete = "off"
-                margin = "normal"
-                name = "observaciones"
-                placeholder = "Observaciones"
-                variant = "outlined"
-                className = { classes.controlEdit }
-                defaultValue = { state.observaciones }
-                onChange = { handleEditAtributos }
-                onFocus = { event => event.target.select() }
-            />
-            <div>
-              <Button
-                  variant = "contained"
-                  color = "primary"
-                  style = {{ marginTop: 8 }}
-                  onClick = { state.nombre.length ? () => handleAddTarea() : null }
-              >
-                Grabar
-              </Button>
-            </div>
-          </div>
-        </Modal>
-    )};
-
   return (
     <div>
       <div className = { classes.root } >
         { renderTitleProceso() }
       </div>
-
-      { renderTimeLine() }
 
       <div className = { classes.root } >
         {
@@ -278,14 +147,25 @@ const ProcesoDetalle = ({ proceso, tareas, ...props }) => {
               key = { tarea.id }
               tarea = { tarea }
               editarTarea = { props.editarTarea }
+              ultimaTarea = { parseInt(tarea.id) === tareas[tareas.length - 1].id }
+              deleteDato = { props.deleteDato }
+              deleteTarea = { props.deleteTarea }
             />
           )
         }
+
         <Button className= { classes.agregarTarea } onClick = { handleHabilitaAddTarea } >
           <AddCircleIcon style = {{ marginRight: theme.spacing() }} />Agregar Tarea
         </Button>
 
-        { state.agregarTarea && renderAddTareaProceso()}
+        { state.agregarTarea &&
+          <TareaAddEditContainer
+            open = { state.agregarTarea }
+            handleHabilitaAddTarea = { handleHabilitaAddTarea }
+            idProceso = { proceso.id }
+            idTareaAntecesora = { !!(tareas && tareas.length) ? tareas[tareas.length - 1].id : null }
+          />
+        }
       </div>
       <div style={{ marginTop: "10px" }}>
         <Button

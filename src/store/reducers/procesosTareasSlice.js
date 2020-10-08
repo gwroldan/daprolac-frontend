@@ -1,6 +1,6 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
-import { fetchProcesos } from "./procesosSlice";
-import { addNewTareaProceso } from "../actions/index";
+import { deleteProceso, fetchProcesos } from "./procesosSlice";
+import {addNewTareaProceso, deleteTareaProceso} from "../actions/actionsShared";
 
 const procesosTareasAdapter = createEntityAdapter({
   selectId: (procesoTarea) => `${procesoTarea.idProceso}-${procesoTarea.idTarea}`
@@ -25,6 +25,14 @@ export const slice = createSlice({
         minutosAntecesora: action.payload.minutosAntecesora
       }
       procesosTareasAdapter.upsertOne(state, procesoTarea);
+    },
+    [deleteTareaProceso.fulfilled]: (state, action) => {
+      const idsDelete = state.ids.filter( id => id.toString().endsWith(`-${action.payload.id}`));
+      procesosTareasAdapter.removeMany(state, idsDelete);
+    },
+    [deleteProceso.fulfilled]: (state, action) => {
+      const idsDelete = state.ids.filter( id => id.toString().startsWith(`${action.payload.id}-`));
+      procesosTareasAdapter.removeMany(state, idsDelete);
     }
   }
 });
