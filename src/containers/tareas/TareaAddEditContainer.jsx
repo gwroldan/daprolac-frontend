@@ -46,6 +46,7 @@ const TareaAddEditContainer = (props) => {
 
   const [ state, setState ] = useState({
     agregarTarea: false,
+    idTarea: props.tarea ? props.tarea.id : null,
     nombre: props.tarea ? props.tarea.nombre : '',
     observaciones: props.tarea ? props.tarea.observaciones : '',
     idProceso: props.tarea ? props.tarea.proceso_tarea.idProceso : props.idProceso,
@@ -68,10 +69,11 @@ const TareaAddEditContainer = (props) => {
 
   const agregarNuevaTareaProceso = async () => {
     const tarea = {
+      idTarea: state.idTarea,
       nombre: state.nombre,
       observaciones: state.observaciones,
-      idProceso: props.idProceso,
-      idTareaAntecesora: props.idTareaAntecesora,
+      idProceso: state.idProceso,
+      idTareaAntecesora: state.idTareaAntecesora,
       diasAntecesora: parseInt(state.diasAntecesora.toString()),
       horasAntecesora: parseInt(state.horasAntecesora.toString()),
       minutosAntecesora: parseInt(state.minutosAntecesora.toString())
@@ -115,6 +117,7 @@ const TareaAddEditContainer = (props) => {
           name = "horasAntecesora"
           variant = "outlined"
           type = "number"
+          InputProps={{ inputProps: { min: 0, max: 59 } }}
           className = { classes.controlTime }
           defaultValue = { state.horasAntecesora }
           onChange = { handleEditAtributos }
@@ -127,6 +130,7 @@ const TareaAddEditContainer = (props) => {
           name = "minutosAntecesora"
           variant = "outlined"
           type = "number"
+          InputProps={{ inputProps: { min: 0, max: 59 } }}
           className = { classes.controlTime }
           defaultValue = { state.minutosAntecesora }
           onChange = { handleEditAtributos }

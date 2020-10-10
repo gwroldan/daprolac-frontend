@@ -16,12 +16,22 @@ export const slice = createSlice({
       tareasDatosAdapter.upsertMany(state, tareasDatos);
     },
     [addNewDatoTarea.fulfilled]: (state, action) => {
-      const tareaDato = {
-        idTarea: action.payload.idTarea,
-        idDato: action.payload.id,
-        obligatorio: action.payload.obligatorio
+      const idTareaDato = `${action.payload.idTarea}-${action.payload.id}`;
+      const tareaDatoExistente = state.entities[idTareaDato];
+
+      if (tareaDatoExistente){
+        tareasDatosAdapter.updateOne(state, {
+          id: idTareaDato,
+          changes: { obligatorio: action.payload.obligatorio
+          }});
+      } else {
+        const tareaDato = {
+          idTarea: action.payload.idTarea,
+          idDato: action.payload.id,
+          obligatorio: action.payload.obligatorio
+        }
+        tareasDatosAdapter.upsertOne(state, tareaDato);
       }
-      tareasDatosAdapter.upsertOne(state, tareaDato);
     },
     [deleteDatoTarea.fulfilled]: (state, action) => {
       const idsDelete = state.ids.filter( id => id.toString().endsWith(`-${action.payload.id}`));

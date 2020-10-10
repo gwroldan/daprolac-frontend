@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const addNewDatoTarea = createAsyncThunk("datos/addNewDatoTarea",async (dato) => {
   const {
+    idDato,
     idTarea,
     nombre,
     unidadMedida,
@@ -34,7 +35,12 @@ export const addNewDatoTarea = createAsyncThunk("datos/addNewDatoTarea",async (d
     datoPost.opciones = opcionesPost;
   }
 
-  const response = await axios.post(`https://daprolac.herokuapp.com/api/v1/datos`, datoPost);
+  let response;
+  if (idDato) {
+    response = await axios.put(`https://daprolac.herokuapp.com/api/v1/datos/${idDato}`, datoPost);
+  } else {
+    response = await axios.post(`https://daprolac.herokuapp.com/api/v1/datos`, datoPost);
+  }
 
   return {
     id: response.data.payload.id,
@@ -59,6 +65,7 @@ export const deleteDatoTarea = createAsyncThunk("datos/deleteDatoTarea",async (i
 
 export const addNewTareaProceso = createAsyncThunk("tareas/addNewTareaProceso",async (tarea) => {
   const {
+    idTarea,
     nombre,
     observaciones,
     idProceso,
@@ -89,7 +96,12 @@ export const addNewTareaProceso = createAsyncThunk("tareas/addNewTareaProceso",a
     tareaPost.proceso.tareaAntecesora = tareaAntecesora;
   }
 
-  const response = await axios.post(`https://daprolac.herokuapp.com/api/v1/tareas`, tareaPost);
+  let response;
+  if (idTarea) {
+    response = await axios.put(`https://daprolac.herokuapp.com/api/v1/tareas/${idTarea}`, tareaPost);
+  } else {
+    response = await axios.post(`https://daprolac.herokuapp.com/api/v1/tareas`, tareaPost);
+  }
 
   return {
     id: response.data.payload.id,
@@ -110,5 +122,3 @@ export const deleteTareaProceso = createAsyncThunk("tareas/deleteTareaProceso",a
     id: response.data.payload.id,
   }
 });
-
-

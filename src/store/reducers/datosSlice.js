@@ -15,7 +15,12 @@ export const slice = createSlice({
     },
     [addNewDatoTarea.fulfilled]: (state, action) => {
       const { id, nombre, unidadMedida, tipo, minimo, maximo, opciones } = action.payload;
-      datosAdapter.addOne(state, { id, nombre, unidadMedida, tipo, minimo, maximo, opciones });
+      const datoExistente = state.entities[id];
+      if (datoExistente) {
+        datosAdapter.updateOne(state, { id, changes: { nombre, unidadMedida, tipo, minimo, maximo, opciones }});
+      } else {
+        datosAdapter.addOne(state, { id, nombre, unidadMedida, tipo, minimo, maximo, opciones });
+      }
     },
     [deleteDatoTarea.fulfilled]: (state, action) => {
       datosAdapter.removeOne(state, action.payload.id);

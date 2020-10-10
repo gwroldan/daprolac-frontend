@@ -67,6 +67,7 @@ const DatoAddEditContainer = (props) => {
   const inputValorOpcion = useRef();
 
   const [ state, setState ] = useState({
+    idDato: props.dato ? props.dato.id : null,
     nombre: props.dato ? props.dato.nombre : '',
     unidadMedida: props.dato ? props.dato.unidadMedida : '',
     tipo: props.dato ? props.dato.tipo : 'numero',
@@ -86,22 +87,23 @@ const DatoAddEditContainer = (props) => {
     setState({
       ...state,
       [name]: value,
-      opciones: name === 'tipo' && value !== 'opcion' ? [] : state.opciones
+      opciones: name === 'tipo' && value !== 'opcion' ? [] : state.opciones,
     });
   }
 
   const agregarNuevoDatoTarea = async () => {
     const dato = {
+      idDato: state.idDato,
       nombre: state.nombre,
       unidadMedida: state.unidadMedida,
       tipo: state.tipo,
-      minimo: parseInt(state.minimo.toString()),
-      maximo: parseInt(state.maximo.toString()),
+      minimo: parseFloat(state.minimo.toString()),
+      maximo: parseFloat(state.maximo.toString()),
       opciones: state.opciones ? state.opciones : [],
       obligatorio: state.obligatorio,
       idTarea: state.idTarea
     }
-    console.log(dato);
+
     await dispatch(addNewDatoTarea(dato));
     props.handleHabilitaAddDato();
   }
@@ -111,12 +113,12 @@ const DatoAddEditContainer = (props) => {
       !!state.nombre.length
       && !!state.unidadMedida.length
       && ((state.tipo === 'opcion' && state.opciones.length)
-        || (state.tipo === 'cadena')
-        || (state.tipo === 'numero'
-              && !!state.minimo.length && !!state.maximo.length
-              && parseInt(state.minimo) !== 0 && parseInt(state.maximo) !== 0
-              && parseInt(state.maximo) > parseInt(state.minimo)))
-    );
+          || (state.tipo === 'cadena')
+          || (state.tipo === 'numero'
+              && !!state.minimo.toString().length && !!state.maximo.toString().length
+              && parseFloat(state.minimo.toString()) !== 0 && parseFloat(state.maximo.toString()) !== 0
+              && parseFloat(state.maximo.toString()) > parseFloat(state.minimo.toString())))
+    )
   }
 
   const handleAgregarOpcion = () => {
@@ -231,86 +233,86 @@ const DatoAddEditContainer = (props) => {
   }
 
   return (
-      <Modal
-          open = { props.open }
-          onClose = { props.handleHabilitaAddDato }
-          className={ classes.modal }
-      >
-        <div className = { classes.paper } >
-          <Grid>
-            <Grid container justify="center" >
-              <Typography variant = "h5" className = { classes.title } >
-                Agregar Dato
-              </Typography>
-            </Grid>
-            <Grid>
-              <TextField
-                autoFocus
-                fullWidth
-                autoComplete = "off"
-                margin = "dense"
-                size = "small"
-                name = "nombre"
-                placeholder = "Nombre"
-                variant = "outlined"
-                className = { classes.controlEditNombre }
-                defaultValue = { state.nombre }
-                onChange = { handleEditAtributos }
-                onFocus = { event => event.target.select() }
-              />
-            </Grid>
-            <Grid>
-              <TextField
-                fullWidth
-                autoComplete = "off"
-                margin = "dense"
-                size = "small"
-                name = "unidadMedida"
-                placeholder = "Unidad de medida"
-                variant = "outlined"
-                className = { classes.controlEdit }
-                defaultValue = { state.unidadMedida }
-                onChange = { handleEditAtributos }
-                onFocus = { event => event.target.select() }
-              />
-            </Grid>
-            <FormControl className = { classes.formControl } >
-              <FormControlLabel
-                control={<Switch checked={state.obligatorio} onChange={handleEditAtributos} name="obligatorio" />}
-                label="Obligatorio"
-              />
-            </FormControl>
-            <Grid>
-              <FormControl className = { classes.formControl } >
-                <Select
-                  name = "tipo"
-                  value = { state.tipo }
-                  onChange = { handleEditAtributos }
-                >
-                  <MenuItem value = '' disabled >Tipo</MenuItem>
-                  <MenuItem value = { 'numero' } >Numero</MenuItem>
-                  <MenuItem value = { 'cadena' } >Texto</MenuItem>
-                  <MenuItem value = { 'opcion' } >Opciones</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            { state.tipo === 'numero' && renderMinMax() }
-            { state.tipo === 'opcion' && renderOpciones() }
-            <div>
-              <Button
-                  fullWidth
-                  variant = "contained"
-                  color = "primary"
-                  style = {{ marginTop: 8 }}
-                  disabled ={ !habilitaGrabarDato() }
-                  onClick = { () => agregarNuevoDatoTarea() }
-              >
-                Grabar
-              </Button>
-            </div>
+    <Modal
+      open = { props.open }
+      onClose = { props.handleHabilitaAddDato }
+      className={ classes.modal }
+    >
+      <div className = { classes.paper } >
+        <Grid>
+          <Grid container justify="center" >
+            <Typography variant = "h5" className = { classes.title } >
+              Agregar Dato
+            </Typography>
           </Grid>
-        </div>
-      </Modal>
+          <Grid>
+            <TextField
+              autoFocus
+              fullWidth
+              autoComplete = "off"
+              margin = "dense"
+              size = "small"
+              name = "nombre"
+              placeholder = "Nombre"
+              variant = "outlined"
+              className = { classes.controlEditNombre }
+              defaultValue = { state.nombre }
+              onChange = { handleEditAtributos }
+              onFocus = { event => event.target.select() }
+            />
+          </Grid>
+          <Grid>
+            <TextField
+              fullWidth
+              autoComplete = "off"
+              margin = "dense"
+              size = "small"
+              name = "unidadMedida"
+              placeholder = "Unidad de medida"
+              variant = "outlined"
+              className = { classes.controlEdit }
+              defaultValue = { state.unidadMedida }
+              onChange = { handleEditAtributos }
+              onFocus = { event => event.target.select() }
+            />
+          </Grid>
+          <FormControl className = { classes.formControl } >
+            <FormControlLabel
+              control={<Switch checked={state.obligatorio} onChange={handleEditAtributos} name="obligatorio" />}
+              label="Obligatorio"
+            />
+          </FormControl>
+          <Grid>
+            <FormControl className = { classes.formControl } >
+              <Select
+                name = "tipo"
+                value = { state.tipo }
+                onChange = { handleEditAtributos }
+              >
+                <MenuItem value = '' disabled >Tipo</MenuItem>
+                <MenuItem value = { 'numero' } >Numero</MenuItem>
+                <MenuItem value = { 'cadena' } >Texto</MenuItem>
+                <MenuItem value = { 'opcion' } >Opciones</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          { state.tipo === 'numero' && renderMinMax() }
+          { state.tipo === 'opcion' && renderOpciones() }
+          <div>
+            <Button
+              fullWidth
+              variant = "contained"
+              color = "primary"
+              style = {{ marginTop: 8 }}
+              disabled = { !habilitaGrabarDato() }
+              onClick = { () => agregarNuevoDatoTarea() }
+            >
+              Grabar
+            </Button>
+          </div>
+        </Grid>
+      </div>
+    </Modal>
   )
 }
 

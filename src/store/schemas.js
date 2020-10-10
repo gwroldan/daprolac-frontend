@@ -26,22 +26,21 @@ export const procesoEntity = new schema.Entity("procesos", {
   tareas: [tareaEntity]
 });
 
-export const datoTareaOrdenEntity = new schema.Entity(
-  "datosTareasOrdenes",
-  {},
-  {
-    idAttribute: value => `${value.idOrden}-${value.idTarea}-${value.idDato}`
-  }
-);
+// export const datoTareaOrdenEntity = new schema.Entity(
+//   "datosOrdenes",
+//   {},
+//   {
+//     idAttribute: value => `${value.idOrden}-${value.idTarea}-${value.idDato}`
+//   }
+// );
 
 export const tareaOrdenEntity = new schema.Entity(
   "tareasOrdenes",
   {
-    usuario: usuarioEntity,
-    datos: [datoTareaOrdenEntity]
+    usuario: usuarioEntity
   },
   {
-    idAttribute: value => `${value.idOrden}-${value.idTarea}-${value.idUsuario}`
+    idAttribute: value => `${value.idOrden}-${value.idTarea}`
   }
 );
 

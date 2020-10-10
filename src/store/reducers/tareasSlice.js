@@ -2,7 +2,7 @@ import { createEntityAdapter, createSlice, createAsyncThunk } from "@reduxjs/too
 import axios from "axios";
 
 import { fetchProcesos } from "./procesosSlice";
-import {addNewDatoTarea, addNewTareaProceso, deleteTareaProceso} from "../actions/actionsShared";
+import { addNewDatoTarea, addNewTareaProceso, deleteTareaProceso, deleteDatoTarea } from "../actions/actionsShared";
 
 const tareasAdapter = createEntityAdapter();
 
@@ -35,17 +35,32 @@ export const slice = createSlice({
     },
     [addNewTareaProceso.fulfilled]: (state, action) => {
       const { id, nombre, observaciones } = action.payload;
-      tareasAdapter.addOne(state, { id, nombre, observaciones });
+      const tareaExistente = state.entities[id];
+
+      if (tareaExistente) {
+        tareasAdapter.updateOne(state, { id, changes: { nombre, observaciones }});
+      } else {
+        tareasAdapter.addOne(state, { id, nombre, observaciones, datos: [] });
+      }
     },
     [addNewTareaProceso.rejected]: (state, action) => {
       console.log(action.error.message);
     },
     [addNewDatoTarea.fulfilled]: (state, action) => {
       const { id, idTarea } = action.payload;
-      state.entities[idTarea].datos.push(id);
+      if (!state.entities[idTarea].datos.includes(id)) {
+        state.entities[idTarea].datos.push(id);
+      }
     },
     [deleteTareaProceso.fulfilled]: (state, action) => {
       tareasAdapter.removeOne(state, action.payload.id);
+    },
+    [deleteDatoTarea.fulfilled]: (state, action) => {
+      const idDato = action.payload.id;
+      Object.keys(state.entities).forEach( idTarea => {
+        const datos = state.entities[idTarea].datos;
+        state.entities[idTarea].datos = datos.filter(idD => parseInt(idD) !== parseInt(idDato));
+      })
     }
   }
 });

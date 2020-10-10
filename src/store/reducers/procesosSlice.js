@@ -8,7 +8,7 @@ import axios from 'axios';
 import { normalize } from 'normalizr';
 
 import { procesoEntity } from '../schemas';
-import { addNewTareaProceso } from "../actions/actionsShared";
+import { addNewTareaProceso, deleteTareaProceso } from "../actions/actionsShared";
 
 const procesosAdapter = createEntityAdapter();
 
@@ -78,7 +78,9 @@ const slice = createSlice({
     [fetchProcesos.pending]: (state) => { state.status = "loading" },
     [fetchProcesos.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      procesosAdapter.upsertMany(state, action.payload.procesos);
+
+      const procesos = action.payload.procesos ? action.payload.procesos : {}
+      procesosAdapter.upsertMany(state, procesos);
     },
     [fetchProcesos.rejected]: (state, action) => {
       state.status = "failed";
@@ -94,7 +96,16 @@ const slice = createSlice({
     },
     [addNewTareaProceso.fulfilled]: (state, action) => {
       const { id, idProceso } = action.payload;
-      state.entities[idProceso].tareas.push(id);
+      if (!state.entities[idProceso].tareas.includes(id)) {
+        state.entities[idProceso].tareas.push(id);
+      }
+    },
+    [deleteTareaProceso.fulfilled]: (state, action) => {
+      const idTarea = action.payload.id;
+      Object.keys(state.entities).forEach( idProceso => {
+        const tareas = state.entities[idProceso].tareas;
+        state.entities[idProceso].tareas = tareas.filter(idT => parseInt(idT) !== parseInt(idTarea));
+      })
     }
   }
 });
@@ -141,6 +152,8 @@ export const selectTareasByProcesoId = (idProceso) =>
               datosComplete.push(datoOrder)
             })
             tareaOrder.datos = datosComplete;
+          } else {
+            tareaOrder.datos = [];
           }
 
           tareasComplete[idxOrder] = tareaOrder;
@@ -148,6 +161,11 @@ export const selectTareasByProcesoId = (idProceso) =>
 
         return tareasComplete;
       }
+    );
+
+export const selectProcesosWithTareas = createSelector(
+      [selectAllProcesos],
+      (procesos) => procesos.filter(proceso => proceso.tareas && proceso.tareas.length)
     );
 
 export default slice.reducer;

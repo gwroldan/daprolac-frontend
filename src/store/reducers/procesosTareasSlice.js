@@ -16,15 +16,29 @@ export const slice = createSlice({
       procesosTareasAdapter.upsertMany(state, procesosTareas);
     },
     [addNewTareaProceso.fulfilled]: (state, action) => {
-      const procesoTarea = {
-        idProceso: action.payload.idProceso,
-        idTarea: action.payload.id,
-        idTareaAntecesora: action.payload.idTareaAntecesora,
-        diasAntecesora: action.payload.diasAntecesora,
-        horasAntecesora: action.payload.horasAntecesora,
-        minutosAntecesora: action.payload.minutosAntecesora
+      const idProcesoTarea = `${action.payload.idProceso}-${action.payload.id}`;
+      const procesoTareaExistente = state.entities[idProcesoTarea];
+
+      if (procesoTareaExistente) {
+        procesosTareasAdapter.updateOne(state, {
+          id: idProcesoTarea,
+          changes: {
+            diasAntecesora: action.payload.diasAntecesora,
+            horasAntecesora: action.payload.horasAntecesora,
+            minutosAntecesora: action.payload.minutosAntecesora
+          }
+        });
+      } else {
+        const procesoTarea = {
+          idProceso: action.payload.idProceso,
+          idTarea: action.payload.id,
+          idTareaAntecesora: action.payload.idTareaAntecesora,
+          diasAntecesora: action.payload.diasAntecesora,
+          horasAntecesora: action.payload.horasAntecesora,
+          minutosAntecesora: action.payload.minutosAntecesora
+        }
+        procesosTareasAdapter.upsertOne(state, procesoTarea);
       }
-      procesosTareasAdapter.upsertOne(state, procesoTarea);
     },
     [deleteTareaProceso.fulfilled]: (state, action) => {
       const idsDelete = state.ids.filter( id => id.toString().endsWith(`-${action.payload.id}`));

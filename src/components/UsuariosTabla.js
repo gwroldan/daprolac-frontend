@@ -5,8 +5,9 @@ const UsuariosTabla = (props) => {
   const cargarFilas = () => props.usuarios.map((usuario) => (
       <tr key={ usuario.id }>
         <td>{ usuario.nombre }</td>
+        <td>{ usuario.apellido }</td>
         <td>{ usuario.email }</td>
-        <td>{ usuario.tipo }</td>
+        <td>{ parseInt(usuario.tipo.toString()) === 0 ? 'Administrador' : 'Operario' }</td>
       </tr>
   ));
 
@@ -15,6 +16,7 @@ const UsuariosTabla = (props) => {
       <thead>
       <tr>
         <th>Nombre</th>
+        <th>Apellido</th>
         <th>Correo</th>
         <th>Enlace</th>
       </tr>

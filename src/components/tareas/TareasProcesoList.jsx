@@ -304,7 +304,7 @@ const TareasProcesoList = ({ tarea, ...props }) => {
                 <Typography variant = "body2" color = "textSecondary" >
                   { tarea.observaciones }
                 </Typography>
-                { !!tarea.proceso_tarea.diasAntecesora &&
+                { tarea.proceso_tarea.idTareaAntecesora &&
                   <div style = {{ marginTop: 15 }} >
                     <ScheduleIcon color = "secondary" style = {{ float: 'left', marginRight: 6 }} />
                     <Typography variant="subtitle2" color="textSecondary" style = {{ paddingTop: 2 }} >

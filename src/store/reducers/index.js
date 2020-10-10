@@ -7,6 +7,7 @@ import datosReducer from "./datosSlice";
 import procesosTareasReducer from "./procesosTareasSlice";
 import tareasDatosReducer from "./tareasDatosSlice";
 import ordenesReducer from "./ordenesSlice";
+import tareasOrdenesReducer from "./tareasOrdenesSlice";
 
 export default combineReducers({
   usuarios: usuariosReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
   tareas: tareasReducer,
   datos: datosReducer,
   procesosTareas: procesosTareasReducer,
-  tareasDatos: tareasDatosReducer
+  tareasDatos: tareasDatosReducer,
+  tareasOrdenes: tareasOrdenesReducer
 });
