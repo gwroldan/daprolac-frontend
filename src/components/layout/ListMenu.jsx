@@ -8,6 +8,7 @@ import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import CodeIcon from '@material-ui/icons/Code';
 import PersonIcon from '@material-ui/icons/Person';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 
 export const items = [
@@ -15,7 +16,8 @@ export const items = [
   { id: 2, label: "Tareas", link: "/tareas", icon: ListAltIcon },
   { id: 3, label: "Datos", link: "/datos", icon: CodeIcon },
   { id: 4, label: "Usuarios", link: "/usuarios", icon: PersonIcon },
-  { id: 5, label: "Ordenes", link: "/ordenes", icon: DeveloperBoardIcon }
+  { id: 5, label: "Ordenes", link: "/ordenes", icon: DeveloperBoardIcon },
+  { id: 6, label: "Dashboard", link: "/dashboard", icon: AssessmentIcon },
 ];
 
 const useStyles = makeStyles(theme => ({
