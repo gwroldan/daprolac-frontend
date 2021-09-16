@@ -33,15 +33,20 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import { red,green,yellow,purple } from '@material-ui/core/colors';
+import SearchBar from "material-ui-search-bar";
+import LinearProgress from '@material-ui/core/LinearProgress';
+import PropTypes from 'prop-types';
+import Chip from '@material-ui/core/Chip';
 
 
-
+//JSON DE EJEMPLO, DESPUES SE CAMBIA
 const ordenesData = [
     { name: "Terminadas", value: 10, color: "success" },
     { name: "Pendientes", value: 6, color: "error" },
     { name: "Sin empezar", value: 2, color: "warning" },
   ];
 
+  //JSON DE EJEMPLO, DESPUES SE CAMBIA
 const tareasData = [
     { name: "Terminadas", value: 20, color: "success" },
     { name: "Pendientes", value: 10, color: "error" },
@@ -49,7 +54,7 @@ const tareasData = [
   ];
   
 
-
+//JSON DE EJEMPLO, DESPUES SE CAMBIA
 const data = [
   {
     name: 'Usuario 1',
@@ -66,10 +71,49 @@ const data = [
   
 ];
 
+//JSON DE EJEMPLO, DESPUES SE CAMBIA
+const originalRows = [
+  { nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color:"#e60000"},
+  { nombre: "orden 2", tareas: 200, porcentaje: 100, fecha_estimada: 24, estado:"completado" , color:"#00b33c"},
+  { nombre: "orden 3", tareas: 200, porcentaje: 50, fecha_estimada: 24, estado:"pendiente" , color:"#e60000"},
+  { nombre: "orden 4", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color:"#e60000"},
+  { nombre: "orden 5", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color:"#e60000"},
+  { nombre: "orden 6", tareas: 200, porcentaje: 0, fecha_estimada: 24, estado:"sin empezar", color:"#ffcc00"}
+];
+
+
+function LinearProgressWithLabel(props) {
+  return (
+    <Box display="flex" alignItems="center">
+      <Box width="100%" mr={1}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box minWidth={35}>
+        <Typography variant="body2" color="textSecondary">{
+          props.value} %
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
+LinearProgressWithLabel.propTypes = {
+  /**
+   * The value of the progress indicator for the determinate and buffer variants.
+   * Value between 0 and 100.
+   */
+  value: PropTypes.number.isRequired,
+};
+
 const DashBoard =(props) =>{
     var classes = useStyles();
     var theme = useTheme();
+    const [rows, setRows] = useState(originalRows);
+
+
     
+    
+  
 
     return (
     <div>
@@ -454,6 +498,72 @@ const DashBoard =(props) =>{
             </Grid>
           </Widget>
         </Grid>
+        </Grid>
+
+        <Grid container spacing={2}> 
+        <Grid item lg={6} md={6} sm={6} xs={12}>
+          <Widget title="Control de ordenes" upperTitle className={classes.card}>
+          <SearchBar
+            placeholder="buscar orden..."
+            //value={searched}
+            //onChange={(searchVal) => requestSearch(searchVal)}
+            //onCancelSearch={() => cancelSearch()}
+          />
+          {rows.map((row) => (
+          <Card style={{marginTop:10,marginBottom:10}}>
+            <CardContent>
+            <Grid
+                container
+                spacing={2}
+                sx={{ justifyContent: 'space-between' }}
+            >
+              <Grid item lg={10} item md={8} item xs={6}>
+                <Typography variant="h6"> {row.nombre}</Typography>
+                </Grid>
+
+                <Grid item lg={2} item md={4} item xs={4}>
+                {/* <Typography style={{color:row.color}}> {row.estado}</Typography> */}
+                <Chip style={{color:"white",backgroundColor:row.color}} label={row.estado} />
+                </Grid>
+
+              </Grid>
+              <LinearProgressWithLabel value={row.porcentaje} />
+              <Grid
+              container
+              //style={{marginTop:-20}}
+              spacing={10}
+              sx={{ justifyContent: 'space-between' }}>
+                <Grid item lg={4}>
+                  <Typography variant="h6">% {row.porcentaje}</Typography>
+                </Grid>
+                <Grid item lg={4}>
+                  <Typography variant="h6">{row.tareas}</Typography>
+                </Grid>
+                <Grid item lg={4}>
+                  <Typography variant="h6">{row.fecha_estimada}</Typography>
+                </Grid>
+              </Grid>
+              <Grid
+              container
+              >
+                <Grid item lg={4} item xs={4}>
+                  <Typography color="textSecondary"  variant="h6">completado</Typography>
+                </Grid>
+                <Grid item lg={4} item xs={4}>
+                  <Typography color="textSecondary" style={{marginLeft:20}} variant="h6">tareas</Typography>
+                </Grid>
+                <Grid item lg={4} item xs={4}>
+                  <Typography variant="h6">fecha estimada</Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+          ))}
+            
+           
+          </Widget>
+        </Grid>
+
         </Grid>
     </div>
     
