@@ -8,7 +8,7 @@ const PublicRoute = ({component: Component, restricted, ...rest}) => {
   return (
     <Route {...rest} render = { props => (
       auth && restricted
-        ? <Redirect to = "/procesos" />
+        ? <Redirect to = "/dashboard" />
         : <Component { ...props } />
     )} />
   );

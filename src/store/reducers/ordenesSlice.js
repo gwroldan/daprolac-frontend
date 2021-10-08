@@ -97,4 +97,12 @@ export const selectOrdenesWithNested = createSelector(
       });
     }
 )
+
+export const selectOrdenesFinalizadas = createSelector(
+    [selectAllOrdenes],
+    (ordenes) => {
+      return ordenes.filter(orden => orden.finalizada);
+    }
+)
+
 export default slice.reducer;

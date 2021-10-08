@@ -22,19 +22,6 @@ export default makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     backgroundColor: theme.palette.primary.main,
   },
-  pieChartLegendWrapper: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    marginRight: theme.spacing(1),
-  },
-  legendItemContainer: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: theme.spacing(1),
-  },
   fullHeightBody: {
     display: "flex",
     flexGrow: 1,
