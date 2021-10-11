@@ -52,16 +52,13 @@ export const slice = createSlice({
   }
 });
 
-const reducer = slice.reducer;
-export default reducer;
-
 export const {
-  selectById: selectProcesoTareaById,
-  selectIds: selectProcesoTareaIds,
-  selectEntities: selectProcesoTareaEntities,
-  selectAll: selectAllProcesosTareas,
-  selectTotal: selectTotalProcesosTareas
-} = tareasOrdenesAdaptar.getSelectors(state => state.procesosTareas);
+  selectById: selectTareasOrdenesById,
+  selectIds: selectTareasOrdenesIds,
+  selectEntities: selectTareasOrdenesEntities,
+  selectAll: selectAllTareasOrdenes,
+  selectTotal: selectTotalTareasOrdenes
+} = tareasOrdenesAdaptar.getSelectors(state => state.tareasOrdenes);
 
 export const selectTareasByOrdenId = (idOrden) =>
     createSelector(
@@ -105,3 +102,46 @@ export const selectTareasByOrdenId = (idOrden) =>
           return tareasComplete;
         }
     );
+
+export const selectOrdenesSinComenzar = () =>
+    createSelector(
+        [
+          (state) => state.ordenes.ids.map((id) => state.ordenes.entities[id]),
+          (state) => state.tareasOrdenes.ids.map((id) => state.tareasOrdenes.entities[id])
+        ],
+        (ordenes, tareasOrdenes) => {
+          const ordenesSinComenzar = [];
+          ordenes.forEach(orden => {
+            let tareasOrden = tareasOrdenes.filter(tarea => parseInt(tarea.idOrden) === parseInt(orden.id));
+            orden.tareas = tareasOrden.sort((tA, tB) => new Date(tA.fechaIniciaProp) - new Date(tB.fechaIniciaProp));
+
+            if (orden.tareas[0].fechaInicia == null) {
+              ordenesSinComenzar.push(orden);
+            }
+          });
+
+          return ordenesSinComenzar;
+        }
+    );
+
+export const selectTareasOrdenesSinComenzar = () =>
+    createSelector(
+        [
+          selectAllTareasOrdenes
+        ],
+        (tareasOrdenes) => {
+          return tareasOrdenes.filter(tarea => tarea.fechaInicia == null);
+        }
+    );
+
+export const selectTareasOrdenesFinalizadas = () =>
+    createSelector(
+        [
+          selectAllTareasOrdenes
+        ],
+        (tareasOrdenes) => {
+          return tareasOrdenes.filter(tarea => tarea.fechaFin !== null);
+        }
+    );
+
+export default slice.reducer;
