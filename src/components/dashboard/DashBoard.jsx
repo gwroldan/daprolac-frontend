@@ -23,6 +23,7 @@ import SearchBar from "material-ui-search-bar";
 import Tarjeta from './Tarjeta.jsx'
 import TarjetaEstado from './TarjetaEstado.jsx'
 import TarjetaOrden from "./TarjetaOrden";
+import Calendar from "./CalendarTasks"
 
 //JSON DE EJEMPLO, DESPUES SE CAMBIA
 const data = [
@@ -100,10 +101,12 @@ const DashBoard = (props) => {
       </Grid>
       </Grid>
 
-      <Grid container spacing={2}>
-
-
-      </Grid>
+      <div style={{marginTop:10}}>
+        <Calendar/>
+      </div>
+      
+      
+      
   </div>
   )
 }
