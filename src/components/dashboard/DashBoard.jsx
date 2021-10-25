@@ -102,7 +102,7 @@ const DashBoard = (props) => {
       </Grid>
 
       <div style={{marginTop:10}}>
-        <Calendar/>
+        <Calendar ordenesTareasCalendario={props.ordenesTareasCalendario}  resources={props.resources}/>
       </div>
       
       

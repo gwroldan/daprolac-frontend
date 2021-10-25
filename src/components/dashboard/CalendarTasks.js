@@ -71,7 +71,16 @@ const styles = theme => ({
 
 
 
-const CalendarioTareas = () => {
+
+const instances= [
+  { id: 1, text: 'Andrew Glover' },
+  { id: 2, text: 'Arnie Schwartz' },
+  { id: 3, text: 'John Heart' },
+  { id: 4, text: 'Taylor Riley' },
+  { id: 5, text: 'Brad Farkus' },
+
+]
+const CalendarioTareas = ({...props}) => {
   
     const mainResourceName="members"
     const locale= 'es-ES'
@@ -81,13 +90,14 @@ const CalendarioTareas = () => {
             fieldName: 'members',
             title: 'Members',
             allowMultiple: true,
-            instances: [
-              { id: 1, text: 'Andrew Glover' },
-              { id: 2, text: 'Arnie Schwartz' },
-              { id: 3, text: 'John Heart' },
-              { id: 4, text: 'Taylor Riley' },
-              { id: 5, text: 'Brad Farkus' },
-            ],
+            instances:instances
+            // instances: [
+            //   { id: 1, text: 'Andrew Glover' },
+            //   { id: 2, text: 'Arnie Schwartz' },
+            //   { id: 3, text: 'John Heart' },
+            //   { id: 4, text: 'Taylor Riley' },
+            //   { id: 5, text: 'Brad Farkus' },
+            // ],
           },
     ]
     let diaHoy = new Date()
@@ -112,6 +122,7 @@ const CalendarioTareas = () => {
 
         <Paper>
           <Scheduler
+          //ESCRIBIR data={props.ordenesTareasCalendario} para mostrar los datos de la base, lo mismo con resoruces para que funcione
             data={appointments}
             locale={locale}
           >
@@ -119,13 +130,13 @@ const CalendarioTareas = () => {
               defaultCurrentDate={diaHoy}
             />
             <WeekView
-              startDayHour={8.5}
-              endDayHour={19.5}
+              //startDayHour={8.5}
+              //endDayHour={19.5}
             />
             
             <DayView
-            startDayHour={8.5}
-            endDayHour={19.5}
+            //startDayHour={8.5}
+            //endDayHour={19.5}
             />
             <MonthView />
             <AllDayPanel 
@@ -139,6 +150,7 @@ const CalendarioTareas = () => {
             <Appointments />
             <AppointmentTooltip />
             <Resources
+              //ESCRIBIR data={props.resources} PARA MOSTRAR LOS DATOS DE LA BASE
               data={resources}
               mainResourceName={mainResourceName}
             />
