@@ -1,6 +1,9 @@
 import { makeStyles } from "@material-ui/styles";
 
 export default makeStyles(theme => ({
+  margin: {
+    margin: theme.spacing(1),
+  },
   card: {
     minHeight: "100%",
     display: "flex",

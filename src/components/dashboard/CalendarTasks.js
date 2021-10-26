@@ -22,11 +22,10 @@ import { withStyles } from '@material-ui/core/styles';
 
 const appointments = [{
   title: 'Website Re-Design Plan',
-  startDate: new Date(2021, 9, 18, 12, 35),
+  startDate: new Date(2021, 9, 25, 12, 35),
   //endDate: new Date(2021, 9, 18, 15, 0),
   id: 0,
-  members: [1, 3, 5],
-  location: 'Room 1',
+  members: [1],
 }, {
   title: 'Book Flights to San Fran for Sales Trip',
   startDate: new Date(2021, 9, 19, 12, 35),
@@ -123,7 +122,7 @@ const CalendarioTareas = ({...props}) => {
         <Paper>
           <Scheduler
           //ESCRIBIR data={props.ordenesTareasCalendario} para mostrar los datos de la base, lo mismo con resoruces para que funcione
-            data={appointments}
+            data={props.ordenesTareasCalendario}
             locale={locale}
           >
             <ViewState
@@ -151,7 +150,7 @@ const CalendarioTareas = ({...props}) => {
             <AppointmentTooltip />
             <Resources
               //ESCRIBIR data={props.resources} PARA MOSTRAR LOS DATOS DE LA BASE
-              data={resources}
+              data={props.resources}
               mainResourceName={mainResourceName}
             />
           </Scheduler>

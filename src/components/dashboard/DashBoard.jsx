@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { Grid } from "@material-ui/core";
 import { useTheme } from "@material-ui/styles";
 // styles
@@ -20,6 +20,10 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import { red, yellow } from '@material-ui/core/colors';
 import SearchBar from "material-ui-search-bar";
 
+
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import SearchIcon from '@material-ui/icons/Search';
 import Tarjeta from './Tarjeta.jsx'
 import TarjetaEstado from './TarjetaEstado.jsx'
 import TarjetaOrden from "./TarjetaOrden";
@@ -42,9 +46,13 @@ const data = [
 
 ];
 
+
+
 const DashBoard = (props) => {
   const classes = useStyles();
   const theme = useTheme();
+  const [search, setSearch] = useState(``);
+
 
   return (
     <div>
@@ -58,14 +66,25 @@ const DashBoard = (props) => {
       <Grid container spacing={4}>
         <Grid item lg={6} md={6} sm={6} xs={12}>
           <Widget title="Control de ordenes" upperTitle className={classes.card}>
-            <SearchBar
-                placeholder="buscar orden..."
-                //value={searched}
-                //onChange={(searchVal) => requestSearch(searchVal)}
-                //onCancelSearch={() => cancelSearch()}
-            />
+              <TextField
+                style={{width:"100%"}}
+                placeholder="  Buscar orden..."
+                variant="outlined"
+                color="secondary"
+                onChange={e => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="end">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
             {
-              props.analisisOrdenes.map((row) => (
+              props.analisisOrdenes.filter(orden => orden.nombre.toLowerCase().includes(search.toLowerCase()) 
+              || orden.estado.toLowerCase().includes(search.toLowerCase())
+              || orden.tareas == search 
+              || orden.porcentaje == search).map((row) => (
                 <TarjetaOrden orden = {row} />
               ))
             }

@@ -24,6 +24,8 @@ import {
   selectAllUsarios
 } from "../../store/reducers/usuariosSlice";
 
+import { selectAllTareas } from "../../store/reducers/tareasSlice"
+
 
 const DashBoardContainer = props => {
   const dispatch = useDispatch();
@@ -33,6 +35,9 @@ const DashBoardContainer = props => {
   //NECESITO TRAER LAS ORDENES CON TODOS SUS ARRAYS EMBEBIDOS, SE DEBE CREAR OTRA FUNCION PARECIDA A SelectOrdenesWithNested, pero que traiga absolutamente todo
   const ordenes= useSelector(selectOrdenesWithNested)
   const usuarios= useSelector(selectAllUsarios)
+  const tareas= useSelector(selectAllTareas)
+
+  
 
   const ordenesPorEstado = [
     { name: "Terminadas", value: cantOrdenesFinalizadas, color: "success" },
@@ -40,27 +45,67 @@ const DashBoardContainer = props => {
     { name: "Sin empezar", value: cantOrdenesSinComenzar, color: "warning" },
   ];
 
+  function usuariosTareas(ordenes,usuarios){
+    var usuarioTareaObjeto={};
+    var usuarioTareasArray=[];
+      ordenes.map(orden =>{
+        orden.tareas.map(tarea =>{
+          usuarios.map(user =>{
+            if(tarea.idUsuario == user.id){
+              var completadas=0
+              var pendientes =0
+              var sinEmpezar=0
+              if(tarea.fechaInicia !=null && tarea.fechaFin !=null){
+                completadas++;
+              }
+              else if (tarea.fechaInicia !=null && tarea.fechaFin ==null){
+                pendientes++
+              }
+              else if(tarea.fechaInicia == null && tarea.fechaFin ==null){
+                sinEmpezar++;
+              }
+              usuarioTareaObjeto={
+                name:user.nombre + " "+ user.apellido,
+                completadas:completadas,
+                pendientes:pendientes,
+                sinEmpezar:sinEmpezar
+              }
+              usuarioTareasArray.push(usuarioTareaObjeto)
+            }
+          })
+        })
+      })
+
+      // console.log("USUARIO TAREAS:", usuarioTareasArray)
+      return usuarioTareasArray;
+  }
+
+  const usuarioTareasComponente=usuariosTareas(ordenes,usuarios)
+  console.log("USUARIO TAREAS:", usuarioTareasComponente)
+
 
   //PARA QUE FUNCIONE Y LOS MUESTRE BIEN TENGO QUE TRAER EL ARRAY EMBEBIDO (EL DE TAREAS) QUE FALTA DE ORDENES
-  function ordenesCalendarioFiltradas(ordenes){
+  function ordenesCalendarioFiltradas(ordenes,tareas){
     var tareasCalendario = [];
     var tareaObjetoCalendario = {};
     var id=0
+    console.log(tareas)
     ordenes.map(orden => {
       orden.tareas.map(tarea => {
-          orden.proceso.tareas.map(t => {
+            tareas.map(t => {
             if (tarea.idTarea == t.id  && tarea.fechaInicia != null && tarea.fechaFin == null) {
               tareaObjetoCalendario = {
                 id: id + 1,
                 idTarea:tarea.idTarea,
                 idUsuario:tarea.idUsuario,
-                //title:t.nombre,
-                title:"ordenes",
+                title:t.nombre + "-Fecha Inicial Propuesta: "+ tarea.fechaIniciaProp.substring(0,4)+"-"+tarea.fechaIniciaProp.substring(5,7) +"-"+tarea.fechaIniciaProp.substring(8,10) ,
+                //title:"ordenes",
                 //startDate:new Date(2021, 9, 18, 12, 35),
                 //startDate:tarea.fechaInicia.substring(0,4) + tarea.fechaInicia.substring(5,7) + tarea.fechaInicia.substring(8,10) + tarea.fechaInicia.substring(11,13) + tarea.fechaInicia.substring(14,16),
                 startDate: new Date(tarea.fechaInicia.substring(0,4),tarea.fechaInicia.substring(5,7) - 1, tarea.fechaInicia.substring(8,10), tarea.fechaInicia.substring(11,13), tarea.fechaInicia.substring(14,16)),
                 //endDate: null ,
                 //fechaIniciaProp: tarea.fechaIniciaProp,
+                //members:[tarea.idUsuario],
                 members:[tarea.idUsuario]
               };
               tareasCalendario.push(tareaObjetoCalendario);
@@ -73,7 +118,7 @@ const DashBoardContainer = props => {
     return tareasCalendario
   }
 
-  const ordenesTareasCalendario = ordenesCalendarioFiltradas(ordenes)
+  const ordenesTareasCalendario = ordenesCalendarioFiltradas(ordenes,tareas)
 
 
   //{ nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color:"#e60000"},
@@ -122,7 +167,7 @@ const DashBoardContainer = props => {
         fieldName: 'members',
         title: 'Members',
         allowMultiple: true,
-        instances :[instances],
+        instances :instances
       },
 ]
 
