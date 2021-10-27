@@ -100,7 +100,7 @@ const DashBoard = (props) => {
                 layout="vertical"
                 width="100%"
                 height="60%"
-                data={data}
+                data={props.usuarioTareasComponente}
                 margin={{ left: theme.spacing(2) }}
               >
               <CartesianGrid strokeDasharray="3 3" />

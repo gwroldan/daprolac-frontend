@@ -32,7 +32,6 @@ const DashBoardContainer = props => {
   const cantOrdenes = useSelector(selectAllOrdenes).length;
   const cantOrdenesFinalizadas = useSelector(selectOrdenesFinalizadas).length;
   const cantOrdenesSinComenzar = useSelector(selectOrdenesSinComenzar()).length;
-  //NECESITO TRAER LAS ORDENES CON TODOS SUS ARRAYS EMBEBIDOS, SE DEBE CREAR OTRA FUNCION PARECIDA A SelectOrdenesWithNested, pero que traiga absolutamente todo
   const ordenes= useSelector(selectOrdenesWithNested)
   const usuarios= useSelector(selectAllUsarios)
   const tareas= useSelector(selectAllTareas)
@@ -45,34 +44,78 @@ const DashBoardContainer = props => {
     { name: "Sin empezar", value: cantOrdenesSinComenzar, color: "warning" },
   ];
 
-  function usuariosTareas(ordenes,usuarios){
+  //control de tareas
+  function usuariosTareas(ordenes){
     var usuarioTareaObjeto={};
     var usuarioTareasArray=[];
+
+    
+    var idUsuariosTareas=[]
+
       ordenes.map(orden =>{
         orden.tareas.map(tarea =>{
-          usuarios.map(user =>{
-            if(tarea.idUsuario == user.id){
-              var completadas=0
-              var pendientes =0
-              var sinEmpezar=0
-              if(tarea.fechaInicia !=null && tarea.fechaFin !=null){
-                completadas++;
-              }
-              else if (tarea.fechaInicia !=null && tarea.fechaFin ==null){
-                pendientes++
-              }
-              else if(tarea.fechaInicia == null && tarea.fechaFin ==null){
-                sinEmpezar++;
-              }
+
+          var idUsuarioPosicion=idUsuariosTareas.indexOf(tarea.idUsuario)
+          if(  idUsuarioPosicion != -1 ){
+
+            
+            if(tarea.fechaInicia !=null && tarea.fechaFin !=null){
+
+              usuarioTareasArray[idUsuarioPosicion].completadas++;
+            }
+            else if (tarea.fechaInicia !=null && tarea.fechaFin ==null){
+              usuarioTareasArray[idUsuarioPosicion].pendientes++
+            }
+            else if(tarea.fechaInicia == null && tarea.fechaFin ==null){
+              usuarioTareasArray[idUsuarioPosicion].sinEmpezar++;
+            }
+
+
+          }
+          else if(tarea.idUsuario !=null) {
+            
+            var completadas=0
+            var pendientes =0
+            var sinEmpezar=0
+            if(tarea.fechaInicia !=null && tarea.fechaFin !=null){
+
+              completadas++;
+            }
+            else if (tarea.fechaInicia !=null && tarea.fechaFin ==null){
+              pendientes++
+            }
+            else if( tarea.fechaInicia == null && tarea.fechaFin ==null){
+              sinEmpezar++;
+            }
+            var idUsuarioArrayUsuarios=buscarUsuario(tarea.idUsuario)
+            if( idUsuarioArrayUsuarios != -1 ){
               usuarioTareaObjeto={
-                name:user.nombre + " "+ user.apellido,
+                name:usuarios[idUsuarioArrayUsuarios].nombre + " "+ usuarios[idUsuarioArrayUsuarios].apellido,
+                idUsuario:tarea.idUsuario,
                 completadas:completadas,
                 pendientes:pendientes,
-                sinEmpezar:sinEmpezar
+                sinEmpezar:sinEmpezar,
+                idTarea:tarea.idTarea
+
               }
-              usuarioTareasArray.push(usuarioTareaObjeto)
             }
-          })
+            else{
+              usuarioTareaObjeto={
+                name:"",
+                idUsuario:tarea.idUsuario,
+                completadas:completadas,
+                pendientes:pendientes,
+                sinEmpezar:sinEmpezar,
+                idTarea:tarea.idTarea
+              }
+            }
+            
+
+
+            usuarioTareasArray.push(usuarioTareaObjeto)
+            idUsuariosTareas.push(tarea.idUsuario)
+          } 
+          
         })
       })
 
@@ -80,11 +123,24 @@ const DashBoardContainer = props => {
       return usuarioTareasArray;
   }
 
-  const usuarioTareasComponente=usuariosTareas(ordenes,usuarios)
+  //busco el usuario para el control de tareas
+  function buscarUsuario(idUsuario){
+
+    for(var i=0;i<usuarios.length;i++){
+      
+
+      if(usuarios[i].id == idUsuario){
+          return i;
+      }
+    }
+    return -1;
+  }
+
+  const usuarioTareasComponente=usuariosTareas(ordenes)
   console.log("USUARIO TAREAS:", usuarioTareasComponente)
 
 
-  //PARA QUE FUNCIONE Y LOS MUESTRE BIEN TENGO QUE TRAER EL ARRAY EMBEBIDO (EL DE TAREAS) QUE FALTA DE ORDENES
+  //tareas calendario
   function ordenesCalendarioFiltradas(ordenes,tareas){
     var tareasCalendario = [];
     var tareaObjetoCalendario = {};
@@ -99,13 +155,7 @@ const DashBoardContainer = props => {
                 idTarea:tarea.idTarea,
                 idUsuario:tarea.idUsuario,
                 title:t.nombre + "-Fecha Inicial Propuesta: "+ tarea.fechaIniciaProp.substring(0,4)+"-"+tarea.fechaIniciaProp.substring(5,7) +"-"+tarea.fechaIniciaProp.substring(8,10) ,
-                //title:"ordenes",
-                //startDate:new Date(2021, 9, 18, 12, 35),
-                //startDate:tarea.fechaInicia.substring(0,4) + tarea.fechaInicia.substring(5,7) + tarea.fechaInicia.substring(8,10) + tarea.fechaInicia.substring(11,13) + tarea.fechaInicia.substring(14,16),
                 startDate: new Date(tarea.fechaInicia.substring(0,4),tarea.fechaInicia.substring(5,7) - 1, tarea.fechaInicia.substring(8,10), tarea.fechaInicia.substring(11,13), tarea.fechaInicia.substring(14,16)),
-                //endDate: null ,
-                //fechaIniciaProp: tarea.fechaIniciaProp,
-                //members:[tarea.idUsuario],
                 members:[tarea.idUsuario]
               };
               tareasCalendario.push(tareaObjetoCalendario);
@@ -212,6 +262,7 @@ console.log("RESOURCES: ",resources)
         analisisOrdenes = { analisisOrdenes }
         ordenesTareasCalendario={ordenesTareasCalendario}
         resources={resources}
+        usuarioTareasComponente={usuarioTareasComponente}
     />
   );
 };
