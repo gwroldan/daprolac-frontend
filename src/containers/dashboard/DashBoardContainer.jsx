@@ -35,7 +35,11 @@ const DashBoardContainer = props => {
   const ordenes= useSelector(selectOrdenesWithNested)
   const usuarios= useSelector(selectAllUsarios)
   const tareas= useSelector(selectAllTareas)
+  const ordenesSinComenzar= useSelector(selectOrdenesSinComenzar())
+  const ordenesFinalizadas = useSelector(selectOrdenesFinalizadas)
 
+
+  console.log("ORDENES SIN COMENZAR:", ordenesSinComenzar);
   
 
   const ordenesPorEstado = [
@@ -49,7 +53,7 @@ const DashBoardContainer = props => {
     var usuarioTareaObjeto={};
     var usuarioTareasArray=[];
 
-    
+  
     var idUsuariosTareas=[]
 
       ordenes.map(orden =>{
@@ -173,14 +177,106 @@ const DashBoardContainer = props => {
 
   //{ nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color:"#e60000"},
 
-  const analisisOrdenes = [
-    { nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color: "#e60000"},
-    { nombre: "orden 2", tareas: 200, porcentaje: 100, fecha_estimada: 24, estado:"completado" , color:"#00b33c"},
-    { nombre: "orden 3", tareas: 200, porcentaje: 50, fecha_estimada: 24, estado:"pendiente" , color: "#e60000"},
-    { nombre: "orden 4", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color: "#e60000"},
-    { nombre: "orden 5", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color: "#e60000"},
-    { nombre: "orden 6", tareas: 200, porcentaje: 0, fecha_estimada: 24, estado:"sin empezar", color: "#ffcc00"}
-  ];
+  //control de ordenes
+  function controlDeOrdenes(ordenes,ordenesSinComenzar,ordenesFinalizadas){
+
+    var objetoControlOrdenes={}
+    var arrayControlOrdenes=[]
+    
+    ordenes.map(orden =>{
+      var nombreOrden="orden " + orden.numero
+      var estado=""
+      var color=""
+      var porcentaje=0
+      var cantTareasPorOrden=0
+      var cantTareasSinComenzarPorOrden=0
+      var cantTareasFinalizadasPorOrden=0
+      var cantTareasPendientesPorOrden=0
+      ordenesSinComenzar.map(ordenSinComenzar =>{
+        ordenesFinalizadas.map(ordenfinalizada =>{
+
+
+          if(orden.id == ordenSinComenzar.id){
+
+            estado="sin comenzar"
+            color="#ffcc00"
+            cantTareasSinComenzarPorOrden++
+          }
+          if (orden.id == ordenfinalizada.id){
+            estado="completado"
+            color="#00b33c"
+            cantTareasFinalizadasPorOrden++
+          }
+          
+        })
+      })
+
+      var fechaEstimada
+      //como fecha estimada, le asgine el ultimo fecha inicia prop del array de tareas, como para tener un estimativo
+      orden.tareas.map(tarea =>{
+
+        if (tarea.fechaInicia!=null && tarea.fechaFin ==null){
+          estado="pendiente"
+          color="#e60000"
+          cantTareasPendientesPorOrden++
+        }
+
+        fechaEstimada=tarea.fechaIniciaProp.substring(0,10)
+      })
+
+      
+
+        if (orden.tareas.length != 0){
+            cantTareasPorOrden=orden.tareas.length 
+            console.log("CANT TAREAS FINALIZADAS POR ORDEN "+nombreOrden,cantTareasFinalizadasPorOrden)
+            console.log("CANT TAREAS SIN EMPEZAR POR ORDEN "+nombreOrden,cantTareasSinComenzarPorOrden)
+            console.log("CANT TAREAS PENDIENTES POR ORDEN "+nombreOrden,cantTareasPendientesPorOrden)
+
+            var diferencial= cantTareasPorOrden - cantTareasPendientesPorOrden + cantTareasSinComenzarPorOrden 
+            console.log("DIFERENCIAL:" , diferencial)  
+            if (cantTareasPorOrden == cantTareasFinalizadasPorOrden){
+              porcentaje=100
+            } else if( estado =="sin comenzar")
+              porcentaje =0
+            else{
+              porcentaje=((diferencial * 100) / cantTareasPorOrden).toFixed(2)
+            }
+           
+            //console.log("CANTIDAD DE TAREAS POR ORDEN:",cantTareasPorOrden)
+        }
+       
+        objetoControlOrdenes={
+          nombre:nombreOrden,
+          idDeLaOrden:orden.id,
+          tareas: cantTareasPorOrden,
+          estado:estado,
+          color:color,
+          porcentaje:porcentaje,
+          fecha_estimada:fechaEstimada
+        }
+
+        arrayControlOrdenes.push(objetoControlOrdenes)
+
+      
+      
+     
+    })
+
+    console.log("ARRAY CONTROL DE ORDENES:", arrayControlOrdenes)
+      return arrayControlOrdenes
+
+  }
+
+  const analisisOrdenes=controlDeOrdenes(ordenes,ordenesSinComenzar,ordenesFinalizadas)
+
+  // const analisisOrdenes = [
+  //   { nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color: "#e60000"},
+  //   { nombre: "orden 2", tareas: 200, porcentaje: 100, fecha_estimada: 24, estado:"completado" , color:"#00b33c"},
+  //   { nombre: "orden 3", tareas: 200, porcentaje: 50, fecha_estimada: 24, estado:"pendiente" , color: "#e60000"},
+  //   { nombre: "orden 4", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color: "#e60000"},
+  //   { nombre: "orden 5", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color: "#e60000"},
+  //   { nombre: "orden 6", tareas: 200, porcentaje: 0, fecha_estimada: 24, estado:"sin empezar", color: "#ffcc00"}
+  // ];
 
   const cantTareas = useSelector(selectAllTareasOrdenes).length;
   const cantTareasFinalizadas = useSelector(selectTareasOrdenesFinalizadas()).length;
