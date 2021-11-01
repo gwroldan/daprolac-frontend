@@ -36,6 +36,12 @@ const App = () => {
             restricted={true}
             component={LoginContainer}
           />
+          <PublicRoute
+            exact
+            path="/registro"
+            restricted={true}
+            component={RegistroContainer}
+          />
           <Layout isLight={isLight} toggleTheme={toggleTheme}>
             <PrivateRoute exact path="/" component={() => null} />
             <PrivateRoute
@@ -70,7 +76,7 @@ const App = () => {
               path="/ordenes/:id"
               component={props => <OrdenDetalleContainer {...props} />}
             />
-            <Route exact path="/registro" component={RegistroContainer} />
+            {/* <Route exact path="/registro" component={RegistroContainer} /> */}
           </Layout>
         </Switch>
       </BrowserRouter>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Avatar, Button, Box, Checkbox, Grid, Link, TextField, InputAdornment } from '@material-ui/core';
+import { Avatar, Button, Box, Checkbox, Grid,  TextField, InputAdornment } from '@material-ui/core';
 import { CssBaseline, Container, FormControlLabel, Typography, IconButton, Paper } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +10,8 @@ import EmailIcon from '@material-ui/icons/Email';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+
+import { Link } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -92,7 +94,7 @@ const Login = ({ formik, error }) => {
             helperText = { formik.touched.email && formik.errors.email ? formik.errors.email : '' }
             required
             fullWidth
-            autoFocus
+            //autoFocus
           />
           <TextField
             margin = "normal"
@@ -139,8 +141,11 @@ const Login = ({ formik, error }) => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              {/* <Link href="#" variant="body2">
                 Olvidaste la contraseña?
+              </Link> */}
+              <Link to="/registro"  style={{textDecorationLine:"none", textDecorationColor:"none"}}variant="body2">
+                <Typography color="primary"> No tienes una cuenta? Registrate.</Typography> 
               </Link>
             </Grid>
           </Grid>
