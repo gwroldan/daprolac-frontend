@@ -1,6 +1,6 @@
 import React from 'react'
 
-const UsuariosTabla = (props) => {
+const Usuarios = (props) => {
 
   const cargarFilas = () => props.usuarios.map((usuario) => (
       <tr key={ usuario.id }>
@@ -28,4 +28,4 @@ const UsuariosTabla = (props) => {
   )
 }
 
-export default UsuariosTabla;
+export default Usuarios;

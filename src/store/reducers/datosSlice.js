@@ -1,6 +1,9 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
-import { fetchProcesos } from "./procesosSlice";
+
 import { addNewDatoTarea, deleteDatoTarea } from "../actions/actionsShared";
+
+import { fetchProcesos } from "./procesosSlice";
+import { logoutUsuario } from "./usuariosSlice";
 
 const datosAdapter = createEntityAdapter();
 
@@ -22,9 +25,8 @@ export const slice = createSlice({
         datosAdapter.addOne(state, { id, nombre, unidadMedida, tipo, minimo, maximo, opciones });
       }
     },
-    [deleteDatoTarea.fulfilled]: (state, action) => {
-      datosAdapter.removeOne(state, action.payload.id);
-    }
+    [deleteDatoTarea.fulfilled]: (state, action) => { datosAdapter.removeOne(state, action.payload.id); },
+    [logoutUsuario]: () => datosAdapter.getInitialState()
   }
 });
 

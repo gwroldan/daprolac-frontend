@@ -32,7 +32,7 @@ function LinearProgressWithLabel(props) {
       </Box>
       <Box minWidth={35}>
         <Typography variant="body2" color="textSecondary">
-          {props.value} %
+          {props.value.toFixed(2)} %
         </Typography>
       </Box>
     </Box>
@@ -64,7 +64,7 @@ const TarjetaOrden = ({orden, ...props}) => {
           className={classes.grid}
         >
           <Grid item lg={4}>
-            <Typography variant="h6">{orden.porcentaje} %</Typography>
+            <Typography variant="h6">{orden.porcentaje.toFixed(2)} %</Typography>
           </Grid>
           <Grid item lg={4}>
             <Typography variant="h6">{orden.tareas}</Typography>

@@ -9,6 +9,8 @@ import { normalize } from "normalizr";
 
 import { ordenEntity } from "../schemas";
 
+import { logoutUsuario } from "./usuariosSlice";
+
 const ordenesAdapter = createEntityAdapter();
 
 const initialState = ordenesAdapter.getInitialState({
@@ -54,12 +56,9 @@ const slice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [fetchOrdenes.pending]: state => {
-      state.status = "loading";
-    },
+    [fetchOrdenes.pending]: state => { state.status = "loading"; },
     [fetchOrdenes.fulfilled]: (state, action) => {
       state.status = "succeeded";
-
       const ordenes = action.payload.ordenes ? action.payload.ordenes : {}
       ordenesAdapter.upsertMany(state, ordenes);
     },
@@ -71,9 +70,8 @@ const slice = createSlice({
       const ordenes = action.payload.ordenes ? action.payload.ordenes : {}
       ordenesAdapter.upsertMany(state, ordenes);
     },
-    [addNewOrden.rejected]: (state, action) => {
-      state.error = action.error.message;
-    }
+    [addNewOrden.rejected]: (state, action) => { state.error = action.error.message; },
+    [logoutUsuario]: () => initialState
   }
 });
 
@@ -87,22 +85,61 @@ export const selectOrdenesWithNested = createSelector(
     [
       selectAllOrdenes,
       (state) => state.procesos.ids.map((id) => state.procesos.entities[id]),
+      (state) => state.tareasOrdenes.ids.map((id) => state.tareasOrdenes.entities[id]),
+      (state) => state.usuarios.ids.map((id) => state.usuarios.entities[id]),
+      (state) => state.tareas.ids.map((id) => state.tareas.entities[id]),
     ],
-    (ordenes, procesos) => {
+    (ordenes, procesos, tareasOrdenes, usuarios, tareas) => {
       return ordenes.map(orden => {
+        let tareasOrden = tareasOrdenes.filter(tarea => parseInt(tarea.idOrden) === parseInt(orden.id));
+        let tOrden = tareasOrden.sort((tA, tB) => new Date(tA.fechaIniciaProp) - new Date(tB.fechaIniciaProp));
+
+        tOrden = tOrden.map( tarea => {
+          return {
+            ...tarea,
+            nombre: tareas.filter( ta => ta.id == tarea.idTarea ).pop().nombre,
+            usuario: tarea.idUsuario
+                ? usuarios.filter( u => parseInt(u.id) === parseInt(tarea.idUsuario)).pop()
+                : null
+          }
+        });
+
         return {
           ...orden,
-          proceso: procesos.filter( proceso => parseInt(proceso.id) === parseInt(orden.idProceso)).pop()
+          proceso: procesos.filter( proceso => parseInt(proceso.id) === parseInt(orden.idProceso)).pop(),
+          tareas: tOrden,
         }
       });
     }
 )
 
-export const selectOrdenesFinalizadas = createSelector(
-    [selectAllOrdenes],
-    (ordenes) => {
-      return ordenes.filter(orden => orden.finalizada);
+export const selectOrdenesSinComenzar = createSelector(
+    [
+      (state) => state.ordenes.ids.map((id) => state.ordenes.entities[id]),
+      (state) => state.tareasOrdenes.ids.map((id) => state.tareasOrdenes.entities[id])
+    ],
+    (ordenes, tareasOrdenes) => {
+      const ordenesSinComenzar = [];
+      ordenes.forEach(orden => {
+        let tareasOrden = tareasOrdenes.filter(tarea => parseInt(tarea.idOrden) === parseInt(orden.id));
+        let tareas = tareasOrden.sort((tA, tB) => new Date(tA.fechaIniciaProp) - new Date(tB.fechaIniciaProp));
+
+        if (tareas[0].fechaInicia == null) {
+          ordenesSinComenzar.push({
+            ...orden,
+            tareas: tareas
+          });
+        }
+      });
+
+      return ordenesSinComenzar;
     }
-)
+);
+
+export const selectOrdenesFinalizadas = createSelector(
+  [selectAllOrdenes],
+  (ordenes) => ordenes.filter(orden => orden.finalizada)
+);
+
 
 export default slice.reducer;

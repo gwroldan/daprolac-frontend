@@ -8,7 +8,10 @@ import axios from 'axios';
 import { normalize } from 'normalizr';
 
 import { procesoEntity } from '../schemas';
+
 import { addNewTareaProceso, deleteTareaProceso } from "../actions/actionsShared";
+
+import { logoutUsuario } from "./usuariosSlice";
 
 const procesosAdapter = createEntityAdapter();
 
@@ -106,7 +109,8 @@ const slice = createSlice({
         const tareas = state.entities[idProceso].tareas;
         state.entities[idProceso].tareas = tareas.filter(idT => parseInt(idT) !== parseInt(idTarea));
       })
-    }
+    },
+    [logoutUsuario]: () => initialState
   }
 });
 

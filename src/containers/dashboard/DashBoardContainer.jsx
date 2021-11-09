@@ -8,13 +8,13 @@ import Error from "../../components/utils/Error";
 import {
   fetchOrdenes,
   selectAllOrdenes,
+  selectOrdenesSinComenzar,
   selectOrdenesFinalizadas,
   selectOrdenesWithNested,
 } from "../../store/reducers/ordenesSlice";
 
 import {
   selectAllTareasOrdenes,
-  selectOrdenesSinComenzar,
   selectTareasOrdenesSinComenzar,
   selectTareasOrdenesFinalizadas
 } from "../../store/reducers/tareasOrdenesSlice";
@@ -25,22 +25,18 @@ import {
 } from "../../store/reducers/usuariosSlice";
 
 import { selectAllTareas } from "../../store/reducers/tareasSlice"
+import {fetchProcesos} from "../../store/reducers/procesosSlice";
 
 
 const DashBoardContainer = props => {
   const dispatch = useDispatch();
   const cantOrdenes = useSelector(selectAllOrdenes).length;
-  const cantOrdenesFinalizadas = useSelector(selectOrdenesFinalizadas).length;
-  const cantOrdenesSinComenzar = useSelector(selectOrdenesSinComenzar()).length;
-  const ordenes= useSelector(selectOrdenesWithNested)
-  const usuarios= useSelector(selectAllUsarios)
-  const tareas= useSelector(selectAllTareas)
-  const ordenesSinComenzar= useSelector(selectOrdenesSinComenzar())
   const ordenesFinalizadas = useSelector(selectOrdenesFinalizadas)
-
-
-  console.log("ORDENES SIN COMENZAR:", ordenesSinComenzar);
-  
+  const cantOrdenesFinalizadas = ordenesFinalizadas.length;
+  const ordenesSinComenzar = useSelector(selectOrdenesSinComenzar)
+  const cantOrdenesSinComenzar = ordenesSinComenzar.length;
+  const ordenes = useSelector(selectOrdenesWithNested);
+  const usuarios = useSelector(selectAllUsarios);
 
   const ordenesPorEstado = [
     { name: "Terminadas", value: cantOrdenesFinalizadas, color: "success" },
@@ -48,226 +44,144 @@ const DashBoardContainer = props => {
     { name: "Sin empezar", value: cantOrdenesSinComenzar, color: "warning" },
   ];
 
-  //control de tareas
-  function usuariosTareas(ordenes){
-    var usuarioTareaObjeto={};
-    var usuarioTareasArray=[];
+  const cantTareas = useSelector(selectAllTareasOrdenes).length;
+  const cantTareasFinalizadas = useSelector(selectTareasOrdenesFinalizadas).length;
+  const cantTareasSinComenzar = useSelector(selectTareasOrdenesSinComenzar).length;
 
-  
-    var idUsuariosTareas=[]
+  const tareasPorEstado = [
+    { name: "Terminadas", value: cantTareasFinalizadas, color: "success" },
+    { name: "Pendientes", value: cantTareas - cantTareasFinalizadas - cantTareasSinComenzar, color: "error" },
+    { name: "Sin empezar", value: cantTareasSinComenzar, color: "warning" },
+  ];
 
-      ordenes.map(orden =>{
-        orden.tareas.map(tarea =>{
+  // Tareas por Usuario
+  function usuariosTareas(ordenes) {
+    const usuarioTareas = [];
 
-          var idUsuarioPosicion=idUsuariosTareas.indexOf(tarea.idUsuario)
-          if(  idUsuarioPosicion != -1 ){
-
-            
-            if(tarea.fechaInicia !=null && tarea.fechaFin !=null){
-
-              usuarioTareasArray[idUsuarioPosicion].completadas++;
-            }
-            else if (tarea.fechaInicia !=null && tarea.fechaFin ==null){
-              usuarioTareasArray[idUsuarioPosicion].pendientes++
-            }
-            else if(tarea.fechaInicia == null && tarea.fechaFin ==null){
-              usuarioTareasArray[idUsuarioPosicion].sinEmpezar++;
-            }
-
-
-          }
-          else if(tarea.idUsuario !=null) {
-            
-            var completadas=0
-            var pendientes =0
-            var sinEmpezar=0
-            if(tarea.fechaInicia !=null && tarea.fechaFin !=null){
-
-              completadas++;
-            }
-            else if (tarea.fechaInicia !=null && tarea.fechaFin ==null){
-              pendientes++
-            }
-            else if( tarea.fechaInicia == null && tarea.fechaFin ==null){
-              sinEmpezar++;
-            }
-            var idUsuarioArrayUsuarios=buscarUsuario(tarea.idUsuario)
-            if( idUsuarioArrayUsuarios != -1 ){
-              usuarioTareaObjeto={
-                name:usuarios[idUsuarioArrayUsuarios].nombre + " "+ usuarios[idUsuarioArrayUsuarios].apellido,
-                idUsuario:tarea.idUsuario,
-                completadas:completadas,
-                pendientes:pendientes,
-                sinEmpezar:sinEmpezar,
-                idTarea:tarea.idTarea
-
-              }
-            }
-            else{
-              usuarioTareaObjeto={
-                name:"",
-                idUsuario:tarea.idUsuario,
-                completadas:completadas,
-                pendientes:pendientes,
-                sinEmpezar:sinEmpezar,
-                idTarea:tarea.idTarea
-              }
-            }
-            
-
-
-            usuarioTareasArray.push(usuarioTareaObjeto)
-            idUsuariosTareas.push(tarea.idUsuario)
-          } 
-          
-        })
-      })
-
-      // console.log("USUARIO TAREAS:", usuarioTareasArray)
-      return usuarioTareasArray;
-  }
-
-  //busco el usuario para el control de tareas
-  function buscarUsuario(idUsuario){
-
-    for(var i=0;i<usuarios.length;i++){
-      
-
-      if(usuarios[i].id == idUsuario){
-          return i;
-      }
-    }
-    return -1;
-  }
-
-  const usuarioTareasComponente=usuariosTareas(ordenes)
-  console.log("USUARIO TAREAS:", usuarioTareasComponente)
-
-
-  //tareas calendario
-  function ordenesCalendarioFiltradas(ordenes,tareas){
-    var tareasCalendario = [];
-    var tareaObjetoCalendario = {};
-    var id=0
-    console.log(tareas)
     ordenes.map(orden => {
       orden.tareas.map(tarea => {
-            tareas.map(t => {
-            if (tarea.idTarea == t.id  && tarea.fechaInicia != null && tarea.fechaFin == null) {
-              tareaObjetoCalendario = {
-                id: id + 1,
-                idTarea:tarea.idTarea,
-                idUsuario:tarea.idUsuario,
-                title:t.nombre + "-Fecha Inicial Propuesta: "+ tarea.fechaIniciaProp.substring(0,4)+"-"+tarea.fechaIniciaProp.substring(5,7) +"-"+tarea.fechaIniciaProp.substring(8,10) ,
-                startDate: new Date(tarea.fechaInicia.substring(0,4),tarea.fechaInicia.substring(5,7) - 1, tarea.fechaInicia.substring(8,10), tarea.fechaInicia.substring(11,13), tarea.fechaInicia.substring(14,16)),
-                members:[tarea.idUsuario]
-              };
-              tareasCalendario.push(tareaObjetoCalendario);
-              id++
-            }
+        let tCompletadas = 0
+        let tPendientes = 0
+        let tSinEmpezar = 0
+
+        if (tarea.fechaInicia != null && tarea.fechaFin != null) tCompletadas++;
+        if (tarea.fechaInicia != null && tarea.fechaFin == null) tPendientes++;
+        if (tarea.fechaInicia == null && tarea.fechaFin == null) tSinEmpezar++;
+
+        let indice = tarea.usuario ?
+            usuarioTareas.findIndex( uTarea => uTarea.idUsuario == tarea.idUsuario) :
+            usuarioTareas.findIndex( uTarea => uTarea.idUsuario == 0)
+
+        if (indice != -1) {
+          if (tarea.fechaInicia != null && tarea.fechaFin != null) usuarioTareas[indice].completadas++;
+          if (tarea.fechaInicia != null && tarea.fechaFin == null) usuarioTareas[indice].pendientes++;
+          if (tarea.fechaInicia == null && tarea.fechaFin == null) usuarioTareas[indice].sinEmpezar++;
+        } else {
+          usuarioTareas.push({
+            name: tarea.usuario ? tarea.usuario.nombre + " " + tarea.usuario.apellido : "Sin Asignar",
+            idUsuario: tarea.usuario ? tarea.idUsuario : 0,
+            completadas: tCompletadas,
+            pendientes: tPendientes,
+            sinEmpezar: tSinEmpezar
           });
+        }
       });
     });
-    console.log("TAREAS CALENDARIO: ",tareasCalendario)
+
+    return usuarioTareas;
+  }
+  const usuarioTareasComponente = usuariosTareas(ordenes);
+  console.log("USUARIO TAREAS:", usuarioTareasComponente)
+
+  // Tareas Calendario
+  function ordenesCalendarioFiltradas(ordenes){
+    const tareasCalendario = [];
+    let id = 0;
+
+    ordenes.map(orden => {
+      orden.tareas.map(tarea => {
+        if (tarea.fechaInicia != null && tarea.fechaFin == null) {
+          tareasCalendario.push({
+            id: id++,
+            idTarea: tarea.idTarea,
+            idUsuario: tarea.idUsuario,
+            title: tarea.nombre + " - Fecha Inicial Propuesta: " +
+                tarea.fechaIniciaProp.substring(0,4) + "-" + tarea.fechaIniciaProp.substring(5,7) + "-" + tarea.fechaIniciaProp.substring(8,10),
+            startDate: new Date(tarea.fechaInicia.substring(0,4), tarea.fechaInicia.substring(5,7) - 1, tarea.fechaInicia.substring(8,10),
+                tarea.fechaInicia.substring(11,13), tarea.fechaInicia.substring(14,16)),
+            members: [tarea.idUsuario]
+          });
+        }
+      });
+    });
+
     return tareasCalendario
   }
+  const ordenesTareasCalendario = ordenesCalendarioFiltradas(ordenes);
+  console.log("TAREAS CALENDARIO: ", ordenesTareasCalendario);
 
-  const ordenesTareasCalendario = ordenesCalendarioFiltradas(ordenes,tareas)
+  // Control de Ordenes
+  function controlDeOrdenes(ordenes, ordenesSinComenzar, ordenesFinalizadas) {
+    let controlOrdenes = [];
 
+    ordenes.map(orden => {
+      let estado="";
+      let color="";
+      let cantTareasSinComenzarPorOrden=0;
+      let cantTareasFinalizadasPorOrden=0;
+      let cantTareasPendientesPorOrden=0;
 
-  //{ nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color:"#e60000"},
-
-  //control de ordenes
-  function controlDeOrdenes(ordenes,ordenesSinComenzar,ordenesFinalizadas){
-
-    var objetoControlOrdenes={}
-    var arrayControlOrdenes=[]
-    
-    ordenes.map(orden =>{
-      var nombreOrden="orden " + orden.numero
-      var estado=""
-      var color=""
-      var porcentaje=0
-      var cantTareasPorOrden=0
-      var cantTareasSinComenzarPorOrden=0
-      var cantTareasFinalizadasPorOrden=0
-      var cantTareasPendientesPorOrden=0
-      ordenesSinComenzar.map(ordenSinComenzar =>{
-        ordenesFinalizadas.map(ordenfinalizada =>{
-
-
-          if(orden.id == ordenSinComenzar.id){
-
+      ordenesSinComenzar.map(ordenSinComenzar => {
+        ordenesFinalizadas.map(ordenfinalizada => {
+          if(orden.id === ordenSinComenzar.id) {
             estado="sin comenzar"
             color="#ffcc00"
             cantTareasSinComenzarPorOrden++
           }
-          if (orden.id == ordenfinalizada.id){
+          if (orden.id === ordenfinalizada.id) {
             estado="completado"
             color="#00b33c"
             cantTareasFinalizadasPorOrden++
           }
-          
         })
-      })
+      });
 
-      var fechaEstimada
-      //como fecha estimada, le asgine el ultimo fecha inicia prop del array de tareas, como para tener un estimativo
-      orden.tareas.map(tarea =>{
-
-        if (tarea.fechaInicia!=null && tarea.fechaFin ==null){
+      let fechaEstimada;
+      // Como fecha estimada, le asgine el ultimo fecha inicia prop del array de tareas, como para tener un estimativo
+      orden.tareas.map(tarea => {
+        if (tarea.fechaInicia != null && tarea.fechaFin == null) {
           estado="pendiente"
           color="#e60000"
           cantTareasPendientesPorOrden++
         }
+        fechaEstimada = tarea.fechaIniciaProp.substring(0,10)
+      });
 
-        fechaEstimada=tarea.fechaIniciaProp.substring(0,10)
-      })
+      let cantTareasPorOrden = orden.tareas.length;
+      let porcentaje = 0;
+      if (cantTareasPorOrden !== 0) {
+        let diferencial = cantTareasPorOrden - cantTareasPendientesPorOrden + cantTareasSinComenzarPorOrden;
 
-      
+        porcentaje = ((diferencial * 100) / cantTareasPorOrden);
+        if( estado === "sin comenzar") porcentaje = 0;
+        if (cantTareasPorOrden === cantTareasFinalizadasPorOrden) porcentaje = 100;
+      }
 
-        if (orden.tareas.length != 0){
-            cantTareasPorOrden=orden.tareas.length 
-            console.log("CANT TAREAS FINALIZADAS POR ORDEN "+nombreOrden,cantTareasFinalizadasPorOrden)
-            console.log("CANT TAREAS SIN EMPEZAR POR ORDEN "+nombreOrden,cantTareasSinComenzarPorOrden)
-            console.log("CANT TAREAS PENDIENTES POR ORDEN "+nombreOrden,cantTareasPendientesPorOrden)
+      controlOrdenes.push({
+        nombre: "Orden " + orden.numero,
+        idDeLaOrden: orden.id,
+        tareas: cantTareasPorOrden,
+        estado: estado,
+        color:color,
+        porcentaje:porcentaje,
+        fecha_estimada:fechaEstimada
+      });
+    });
 
-            var diferencial= cantTareasPorOrden - cantTareasPendientesPorOrden + cantTareasSinComenzarPorOrden 
-            console.log("DIFERENCIAL:" , diferencial)  
-            if (cantTareasPorOrden == cantTareasFinalizadasPorOrden){
-              porcentaje=100
-            } else if( estado =="sin comenzar")
-              porcentaje =0
-            else{
-              porcentaje=((diferencial * 100) / cantTareasPorOrden).toFixed(2)
-            }
-           
-            //console.log("CANTIDAD DE TAREAS POR ORDEN:",cantTareasPorOrden)
-        }
-       
-        objetoControlOrdenes={
-          nombre:nombreOrden,
-          idDeLaOrden:orden.id,
-          tareas: cantTareasPorOrden,
-          estado:estado,
-          color:color,
-          porcentaje:porcentaje,
-          fecha_estimada:fechaEstimada
-        }
-
-        arrayControlOrdenes.push(objetoControlOrdenes)
-
-      
-      
-     
-    })
-
-    console.log("ARRAY CONTROL DE ORDENES:", arrayControlOrdenes)
-      return arrayControlOrdenes
-
+    return controlOrdenes;
   }
-
-  const analisisOrdenes=controlDeOrdenes(ordenes,ordenesSinComenzar,ordenesFinalizadas)
+  const analisisOrdenes = controlDeOrdenes(ordenes, ordenesSinComenzar, ordenesFinalizadas);
+  console.log("ARRAY CONTROL DE ORDENES:", analisisOrdenes);
 
   // const analisisOrdenes = [
   //   { nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color: "#e60000"},
@@ -278,76 +192,45 @@ const DashBoardContainer = props => {
   //   { nombre: "orden 6", tareas: 200, porcentaje: 0, fecha_estimada: 24, estado:"sin empezar", color: "#ffcc00"}
   // ];
 
-  const cantTareas = useSelector(selectAllTareasOrdenes).length;
-  const cantTareasFinalizadas = useSelector(selectTareasOrdenesFinalizadas()).length;
-  const cantTareasSinComenzar = useSelector(selectTareasOrdenesSinComenzar()).length;
-
-  const tareasPorEstado = [
-    { name: "Terminadas", value: cantTareasFinalizadas, color: "success" },
-    { name: "Pendientes", value: cantTareas - cantTareasFinalizadas - cantTareasSinComenzar, color: "error" },
-    { name: "Sin empezar", value: cantTareasSinComenzar, color: "warning" },
-  ];
-
-
-  //SIRVE PARA MOSTRAR LOS USUARIOS CON SU RESPECTIVAS TAREAS EN EL CALENDARIO
+  // SIRVE PARA MOSTRAR LOS USUARIOS CON SU RESPECTIVAS TAREAS EN EL CALENDARIO
   function usuariosFiltrados(usuarios){
-    var usuariosResources=[]
-    var usuarioObjetoResource = {};
+    let usuariosResources = [];
 
-    usuarios.map(usuario =>{
-      usuarioObjetoResource={
-        id:usuario.id,
-        text:usuario.nombre + " "+usuario.apellido
-      }
-      usuariosResources.push(usuarioObjetoResource)
+    usuarios.map(usuario => {
+      usuariosResources.push({
+        id: usuario.id,
+        text: usuario.nombre + " " + usuario.apellido
+      });
     })
 
-    return usuariosResources
+    return usuariosResources;
   }
-
-  const instances=usuariosFiltrados(usuarios)
-
   const resources = [
     {
-        //se debe respetar este formato para que se visualicen los miembros
-        fieldName: 'members',
-        title: 'Members',
-        allowMultiple: true,
-        instances :instances
-      },
-]
+      //se debe respetar este formato para que se visualicen los miembros
+      fieldName: 'members',
+      title: 'Members',
+      allowMultiple: true,
+      instances :usuariosFiltrados(usuarios)
+    },
+  ];
+  console.log("RESOURCES: ",resources);
 
-console.log("RESOURCES: ",resources)
+  const statusUsuarios = useSelector(state => state.usuarios.status);
+  const statusProcesos = useSelector((state) => state.procesos.status);
+  const statusOrdenes = useSelector((state) => state.ordenes.status);
+  const errorUsuarios = useSelector((state) => state.usuarios.error);
+  const errorProcesos = useSelector((state) => state.procesos.error);
+  const errorOrdenes = useSelector((state) => state.ordenes.error);
 
-  const postStatus = useSelector((state) => state.procesos.status);
-  const postStatusUsuarios = useSelector(state => state.usuarios.status);
-  const error = useSelector((state) => state.procesos.error);
+  useEffect(() => { if (statusUsuarios === "idle") { dispatch(fetchUsuarios()); }}, [statusUsuarios, dispatch]);
+  useEffect(() => { if (statusProcesos === "idle") { dispatch(fetchProcesos()); }}, [statusProcesos, dispatch]);
+  useEffect(() => { if (statusOrdenes === "idle") { dispatch(fetchOrdenes()); }}, [statusOrdenes, dispatch]);
 
-  useEffect(() => {
-    if (postStatus === "idle") {
-      dispatch(fetchOrdenes());
-    }
-  }, [postStatus, dispatch]);
-
-  useEffect(() => {
-    if (postStatusUsuarios === "idle") {
-      dispatch(fetchUsuarios());
-    }
-  }, [postStatusUsuarios, dispatch]);
-
-  if (postStatus === 'loading') {
-    return <Spinner />;
-  }
-  if (postStatus === 'failed') {
-    return <Error mensaje = { error } />;
-  }
-
-  if (postStatusUsuarios === 'loading') {
-    return <Spinner />;
-  }
-  if (postStatusUsuarios === 'failed') {
-    return <Error mensaje = { error } />;
-  }
+  if (statusUsuarios === 'loading' || statusProcesos === 'loading' || statusOrdenes === 'loading') { return <Spinner />; }
+  if (statusUsuarios === 'failed') { return <Error mensaje = { errorUsuarios } />; }
+  if (statusProcesos === 'failed') { return <Error mensaje = { errorProcesos } />; }
+  if (statusOrdenes === 'failed') { return <Error mensaje = { errorOrdenes } />; }
 
   return (
     <DashBoard
@@ -356,9 +239,9 @@ console.log("RESOURCES: ",resources)
         ordenesPorEstado = { ordenesPorEstado }
         tareasPorEstado = { tareasPorEstado }
         analisisOrdenes = { analisisOrdenes }
-        ordenesTareasCalendario={ordenesTareasCalendario}
-        resources={resources}
-        usuarioTareasComponente={usuarioTareasComponente}
+        ordenesTareasCalendario = { ordenesTareasCalendario }
+        resources = { resources }
+        usuarioTareasComponente = { usuarioTareasComponente }
     />
   );
 };

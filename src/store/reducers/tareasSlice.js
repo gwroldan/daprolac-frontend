@@ -1,8 +1,10 @@
 import { createEntityAdapter, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-import { fetchProcesos } from "./procesosSlice";
 import { addNewDatoTarea, addNewTareaProceso, deleteTareaProceso, deleteDatoTarea } from "../actions/actionsShared";
+
+import { fetchProcesos } from "./procesosSlice";
+import { logoutUsuario } from "./usuariosSlice";
 
 const tareasAdapter = createEntityAdapter();
 
@@ -61,7 +63,8 @@ export const slice = createSlice({
         const datos = state.entities[idTarea].datos;
         state.entities[idTarea].datos = datos.filter(idD => parseInt(idD) !== parseInt(idDato));
       })
-    }
+    },
+    [logoutUsuario]: () => tareasAdapter.getInitialState()
   }
 });
 

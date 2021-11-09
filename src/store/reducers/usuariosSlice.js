@@ -47,7 +47,8 @@ const usuariosSlice = createSlice({
       if (procesoExistente) {
         procesoExistente.producto = producto;
       }
-    }
+    },
+    logoutUsuario: () => initialState
   },
   extraReducers: builder => {
     const isPendingAction = (action) => { return (action.type.startsWith('usuarios/') && action.type.endsWith('/pending')) };
@@ -81,7 +82,7 @@ const usuariosSlice = createSlice({
   }
 });
 
-export const { usuarioActualizado } = usuariosSlice.actions;
+export const { usuarioActualizado, logoutUsuario } = usuariosSlice.actions;
 
 export const {
   selectAll: selectAllUsarios,

@@ -10,7 +10,7 @@ import LoginContainer from "./registro/LoginContainer";
 import RegistroContainer from "./registro/RegistroContainer";
 import ProcesosContainer from "./procesos/ProcesosContainer";
 import ProcesoDetalleContainer from "./procesos/ProcesoDetalleContainer";
-import Usuarios from "../components/Usuarios";
+import UsuariosContainer from "./registro/UsuariosContainer";
 import DashBoardContainer from "../containers/dashboard/DashBoardContainer";
 import OrdenesContainer from "./ordenes/OrdenesContainer";
 import OrdenDetalleContainer from "./ordenes/OrdenDetalleContainer";
@@ -54,12 +54,12 @@ const App = () => {
               path="/procesos/:id"
               component={props => <ProcesoDetalleContainer {...props} />}
             />
-            <PrivateRoute exact path="/tareas" component={() => null} />
-            <PrivateRoute exact path="/datos" component={() => null} />
+            {/*<PrivateRoute exact path="/tareas" component={() => null} />*/}
+            {/*<PrivateRoute exact path="/datos" component={() => null} />*/}
             <PrivateRoute
               exact
               path="/usuarios"
-              component={props => <Usuarios />}
+              component={props => <UsuariosContainer />}
             />
             <PrivateRoute
               exact

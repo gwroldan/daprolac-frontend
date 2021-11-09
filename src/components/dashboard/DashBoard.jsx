@@ -81,12 +81,12 @@ const DashBoard = (props) => {
                 }}
               />
             {
-              props.analisisOrdenes.filter(orden => orden.nombre.toLowerCase().includes(search.toLowerCase()) 
-              || orden.estado.toLowerCase().includes(search.toLowerCase())
-              || orden.tareas == search 
-              || orden.porcentaje == search).map((row) => (
-                <TarjetaOrden orden = {row} />
-              ))
+              props.analisisOrdenes.filter(orden => orden.nombre.toLowerCase().includes(search.toLowerCase())
+                || orden.estado.toLowerCase().includes(search.toLowerCase())
+                || orden.tareas == search
+                || orden.porcentaje == search).map((row) => (
+                  <TarjetaOrden orden = { row } key = { row.nombre } />
+                ))
             }
           </Widget>
         </Grid>
@@ -104,13 +104,13 @@ const DashBoard = (props) => {
                 margin={{ left: theme.spacing(2) }}
               >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category"/>
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="completadas" fill="#00b33c" />
-              <Bar dataKey="pendientes" fill="#e60000" />
-              <Bar name="sin empezar" dataKey="sinEmpezar" fill="#ffcc00" />
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category"/>
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="completadas" fill="#00b33c" />
+                <Bar dataKey="pendientes" fill="#e60000" />
+                <Bar name="sin empezar" dataKey="sinEmpezar" fill="#ffcc00" />
               </BarChart>
           </ResponsiveContainer>
             </Grid>
@@ -123,9 +123,9 @@ const DashBoard = (props) => {
       <div style={{marginTop:10}}>
         <Calendar ordenesTareasCalendario={props.ordenesTareasCalendario}  resources={props.resources}/>
       </div>
-      
-      
-      
+
+
+
   </div>
   )
 }

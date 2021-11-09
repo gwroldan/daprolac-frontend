@@ -1,6 +1,8 @@
 import { createSlice, createEntityAdapter, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
-import { addNewOrden, fetchOrdenes } from "./ordenesSlice";
 import axios from "axios";
+
+import { addNewOrden, fetchOrdenes } from "./ordenesSlice";
+import { logoutUsuario } from "./usuariosSlice";
 
 const tareasOrdenesAdaptar = createEntityAdapter({
   selectId: tareaOrden => `${tareaOrden.idOrden}-${tareaOrden.idTarea}`
@@ -49,6 +51,7 @@ export const slice = createSlice({
           : {};
       tareasOrdenesAdaptar.upsertMany(state, tareasOrdenes);
     },
+    [logoutUsuario]: () => tareasOrdenesAdaptar.getInitialState()
   }
 });
 
@@ -103,45 +106,14 @@ export const selectTareasByOrdenId = (idOrden) =>
         }
     );
 
-export const selectOrdenesSinComenzar = () =>
-    createSelector(
-        [
-          (state) => state.ordenes.ids.map((id) => state.ordenes.entities[id]),
-          (state) => state.tareasOrdenes.ids.map((id) => state.tareasOrdenes.entities[id])
-        ],
-        (ordenes, tareasOrdenes) => {
-          const ordenesSinComenzar = [];
-          ordenes.forEach(orden => {
-            let tareasOrden = tareasOrdenes.filter(tarea => parseInt(tarea.idOrden) === parseInt(orden.id));
-            orden.tareas = tareasOrden.sort((tA, tB) => new Date(tA.fechaIniciaProp) - new Date(tB.fechaIniciaProp));
+export const selectTareasOrdenesSinComenzar = createSelector(
+  [ selectAllTareasOrdenes],
+  (tareasOrdenes) => tareasOrdenes.filter(tarea => tarea.fechaInicia == null)
+);
 
-            if (orden.tareas[0].fechaInicia == null) {
-              ordenesSinComenzar.push(orden);
-            }
-          });
-
-          return ordenesSinComenzar;
-        }
-    );
-
-export const selectTareasOrdenesSinComenzar = () =>
-    createSelector(
-        [
-          selectAllTareasOrdenes
-        ],
-        (tareasOrdenes) => {
-          return tareasOrdenes.filter(tarea => tarea.fechaInicia == null);
-        }
-    );
-
-export const selectTareasOrdenesFinalizadas = () =>
-    createSelector(
-        [
-          selectAllTareasOrdenes
-        ],
-        (tareasOrdenes) => {
-          return tareasOrdenes.filter(tarea => tarea.fechaFin !== null);
-        }
-    );
+export const selectTareasOrdenesFinalizadas = createSelector(
+  [ selectAllTareasOrdenes ],
+  (tareasOrdenes) => tareasOrdenes.filter(tarea => tarea.fechaFin !== null)
+);
 
 export default slice.reducer;

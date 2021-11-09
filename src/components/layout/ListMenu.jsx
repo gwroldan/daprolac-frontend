@@ -12,12 +12,12 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 
 export const items = [
-  { id: 1, label: "Procesos", link: "/procesos", icon: DynamicFeedIcon },
-  { id: 2, label: "Tareas", link: "/tareas", icon: ListAltIcon },
-  { id: 3, label: "Datos", link: "/datos", icon: CodeIcon },
-  { id: 4, label: "Usuarios", link: "/usuarios", icon: PersonIcon },
-  { id: 5, label: "Ordenes", link: "/ordenes", icon: DeveloperBoardIcon },
-  { id: 6, label: "Dashboard", link: "/dashboard", icon: AssessmentIcon },
+  { id: 1, label: "Dashboard", link: "/dashboard", icon: AssessmentIcon },
+  { id: 2, label: "Usuarios", link: "/usuarios", icon: PersonIcon },
+  { id: 3, label: "Procesos", link: "/procesos", icon: DynamicFeedIcon },
+  { id: 4, label: "Ordenes", link: "/ordenes", icon: DeveloperBoardIcon },
+  // { id: 2, label: "Tareas", link: "/tareas", icon: ListAltIcon },
+  // { id: 3, label: "Datos", link: "/datos", icon: CodeIcon },
 ];
 
 const useStyles = makeStyles(theme => ({

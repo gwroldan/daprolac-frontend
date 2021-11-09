@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchUsuarios, selectAllUsarios } from '../store/reducers/usuariosSlice';
+import { fetchUsuarios, selectAllUsarios } from '../../store/reducers/usuariosSlice';
 
-import Spinner from './utils/Spinner';
-import Error from './utils/Error'
-import UsuariosTabla from './UsuariosTabla';
+import Spinner from '../../components/utils/Spinner';
+import Error from '../../components/utils/Error'
+import Usuarios from '../../components/registro/Usuarios';
 
-const Usuarios = () => {
+const UsuariosContainer = () => {
   const dispatch = useDispatch();
   const usuarios = useSelector(selectAllUsarios);
 
@@ -27,7 +27,7 @@ const Usuarios = () => {
     return <Error mensaje = { error } />;
   }
 
-  return <UsuariosTabla usuarios = { usuarios } />;
+  return <Usuarios usuarios = { usuarios } />;
 };
 
-export default Usuarios;
+export default UsuariosContainer;
