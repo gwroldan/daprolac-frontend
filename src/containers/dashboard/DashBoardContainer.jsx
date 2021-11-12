@@ -24,8 +24,7 @@ import {
   selectAllUsarios
 } from "../../store/reducers/usuariosSlice";
 
-import { selectAllTareas } from "../../store/reducers/tareasSlice"
-import {fetchProcesos} from "../../store/reducers/procesosSlice";
+import { fetchProcesos } from "../../store/reducers/procesosSlice";
 
 
 const DashBoardContainer = props => {
@@ -54,8 +53,7 @@ const DashBoardContainer = props => {
     { name: "Sin empezar", value: cantTareasSinComenzar, color: "warning" },
   ];
 
-  // Tareas por Usuario
-  function usuariosTareas(ordenes) {
+  const agruparTareasPorUsuario = (ordenes) => {
     const usuarioTareas = [];
 
     ordenes.map(orden => {
@@ -90,11 +88,7 @@ const DashBoardContainer = props => {
 
     return usuarioTareas;
   }
-  const usuarioTareasComponente = usuariosTareas(ordenes);
-  console.log("USUARIO TAREAS:", usuarioTareasComponente)
-
-  // Tareas Calendario
-  function ordenesCalendarioFiltradas(ordenes){
+  const obtenerTareasCalendario = (ordenes) => {
     const tareasCalendario = [];
     let id = 0;
 
@@ -117,11 +111,7 @@ const DashBoardContainer = props => {
 
     return tareasCalendario
   }
-  const ordenesTareasCalendario = ordenesCalendarioFiltradas(ordenes);
-  console.log("TAREAS CALENDARIO: ", ordenesTareasCalendario);
-
-  // Control de Ordenes
-  function controlDeOrdenes(ordenes, ordenesSinComenzar, ordenesFinalizadas) {
+  const obtenerAnalisisDeOrdenes = (ordenes, ordenesSinComenzar, ordenesFinalizadas) => {
     let controlOrdenes = [];
 
     ordenes.map(orden => {
@@ -167,33 +157,22 @@ const DashBoardContainer = props => {
         if (cantTareasPorOrden === cantTareasFinalizadasPorOrden) porcentaje = 100;
       }
 
-      controlOrdenes.push({
-        nombre: "Orden " + orden.numero,
-        idDeLaOrden: orden.id,
-        tareas: cantTareasPorOrden,
-        estado: estado,
-        color:color,
-        porcentaje:porcentaje,
-        fecha_estimada:fechaEstimada
-      });
+      if (estado !== "completado") {
+        controlOrdenes.push({
+          nombre: "Orden " + orden.numero,
+          idDeLaOrden: orden.id,
+          tareas: cantTareasPorOrden,
+          estado: estado,
+          color:color,
+          porcentaje:porcentaje,
+          fecha_estimada:fechaEstimada
+        });
+      }
     });
 
     return controlOrdenes;
   }
-  const analisisOrdenes = controlDeOrdenes(ordenes, ordenesSinComenzar, ordenesFinalizadas);
-  console.log("ARRAY CONTROL DE ORDENES:", analisisOrdenes);
-
-  // const analisisOrdenes = [
-  //   { nombre: "orden 1", tareas: 10, porcentaje: 13, fecha_estimada: "24-2-1", estado:"pendiente", color: "#e60000"},
-  //   { nombre: "orden 2", tareas: 200, porcentaje: 100, fecha_estimada: 24, estado:"completado" , color:"#00b33c"},
-  //   { nombre: "orden 3", tareas: 200, porcentaje: 50, fecha_estimada: 24, estado:"pendiente" , color: "#e60000"},
-  //   { nombre: "orden 4", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color: "#e60000"},
-  //   { nombre: "orden 5", tareas: 200, porcentaje: 6.0, fecha_estimada: 24, estado:"pendiente", color: "#e60000"},
-  //   { nombre: "orden 6", tareas: 200, porcentaje: 0, fecha_estimada: 24, estado:"sin empezar", color: "#ffcc00"}
-  // ];
-
-  // SIRVE PARA MOSTRAR LOS USUARIOS CON SU RESPECTIVAS TAREAS EN EL CALENDARIO
-  function usuariosFiltrados(usuarios){
+  const usuariosCalendario = (usuarios) => {
     let usuariosResources = [];
 
     usuarios.map(usuario => {
@@ -201,20 +180,18 @@ const DashBoardContainer = props => {
         id: usuario.id,
         text: usuario.nombre + " " + usuario.apellido
       });
-    })
+    });
 
-    return usuariosResources;
+    return [
+      {
+        //se debe respetar este formato para que se visualicen los miembros
+        fieldName: 'members',
+        title: 'Members',
+        allowMultiple: true,
+        instances: usuariosResources
+      },
+    ];
   }
-  const resources = [
-    {
-      //se debe respetar este formato para que se visualicen los miembros
-      fieldName: 'members',
-      title: 'Members',
-      allowMultiple: true,
-      instances :usuariosFiltrados(usuarios)
-    },
-  ];
-  console.log("RESOURCES: ",resources);
 
   const statusUsuarios = useSelector(state => state.usuarios.status);
   const statusProcesos = useSelector((state) => state.procesos.status);
@@ -238,10 +215,10 @@ const DashBoardContainer = props => {
         cantTareas = { cantTareas }
         ordenesPorEstado = { ordenesPorEstado }
         tareasPorEstado = { tareasPorEstado }
-        analisisOrdenes = { analisisOrdenes }
-        ordenesTareasCalendario = { ordenesTareasCalendario }
-        resources = { resources }
-        usuarioTareasComponente = { usuarioTareasComponente }
+        analisisOrdenes = { obtenerAnalisisDeOrdenes(ordenes, ordenesSinComenzar, ordenesFinalizadas) }
+        ordenesTareasCalendario = { obtenerTareasCalendario(ordenes) }
+        resources = { usuariosCalendario(usuarios) }
+        usuarioTareasComponente = { agruparTareasPorUsuario(ordenes) }
     />
   );
 };
