@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({ formik, error }) => {
+const Login = ({ formik, error, mensaje }) => {
   const classes = useStyles();
   const [ showPassword, setShowPassword ] = React.useState(false);
 
@@ -70,7 +70,7 @@ const Login = ({ formik, error }) => {
         {
           error && <Grid container>
             <Grid item xs={12}>
-              <Paper className = { classes.error }>Email o clave invalida</Paper>
+              <Paper className = { classes.error }>{ mensaje }</Paper>
             </Grid>
           </Grid>
         }
@@ -139,16 +139,16 @@ const Login = ({ formik, error }) => {
           >
             Ingresar
           </Button>
-          <Grid container>
-            <Grid item xs>
-              {/* <Link href="#" variant="body2">
-                Olvidaste la contraseña?
-              </Link> */}
-              <Link to="/registro"  style={{textDecorationLine:"none", textDecorationColor:"none"}}variant="body2">
-                <Typography color="primary"> No tienes una cuenta? Registrate.</Typography> 
-              </Link>
-            </Grid>
-          </Grid>
+          {/*<Grid container>*/}
+          {/*  <Grid item xs>*/}
+          {/*    /!* <Link href="#" variant="body2">*/}
+          {/*      Olvidaste la contraseña?*/}
+          {/*    </Link> *!/*/}
+          {/*    <Link to="/registro"  style={{textDecorationLine:"none", textDecorationColor:"none"}}variant="body2">*/}
+          {/*      <Typography color="primary"> No tienes una cuenta? Registrate.</Typography> */}
+          {/*    </Link>*/}
+          {/*  </Grid>*/}
+          {/*</Grid>*/}
         </form>
       </div>
       <Box mt={8}>

@@ -18,33 +18,17 @@ const OrdenesContainer = () => {
   const dispatch = useDispatch();
   const ordenes = useSelector(selectOrdenesWithNested);
 
-  const postStatus = useSelector(state => state.ordenes.status);
+  const postStatusOrdenes = useSelector(state => state.ordenes.status);
   const postStatusUsuarios = useSelector(state => state.usuarios.status);
   const error = useSelector(state => state.ordenes.error);
   const errorUsuarios = useSelector(state => state.usuarios.error);
 
-  useEffect(() => {
-    if (postStatus === "idle") {
-      dispatch(fetchOrdenes());
-    }
-  }, [postStatus, dispatch]);
+  useEffect(() => { if (postStatusOrdenes === "idle") { dispatch(fetchOrdenes()); }}, [postStatusOrdenes, dispatch]);
+  useEffect(() => { if (postStatusUsuarios === "idle") { dispatch(fetchUsuarios()); }}, [postStatusUsuarios, dispatch]);
 
-  useEffect(() => {
-    if (postStatusUsuarios === "idle") {
-      dispatch(fetchUsuarios());
-    }
-  }, [postStatusUsuarios, dispatch]);
-
-  if (postStatus === "loading" || postStatusUsuarios === "loading") {
-    return <Spinner />;
-  }
-  if (postStatus === "failed") {
-    return <Error mensaje={error} />;
-  }
-
-  if (postStatusUsuarios === "failed") {
-    return <Error mensaje={errorUsuarios} />;
-  }
+  if (postStatusOrdenes === "loading" || postStatusUsuarios === "loading") { return <Spinner />; }
+  if (postStatusOrdenes === "failed") { return <Error mensaje={error} />; }
+  if (postStatusUsuarios === "failed") { return <Error mensaje={errorUsuarios} />; }
 
   return (
     <Fragment>

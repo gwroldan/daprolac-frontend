@@ -53,6 +53,7 @@ const LoginContainer = () => {
           <Login
             formik = { formik }
             error = { (isSubmitted && !auth) }
+            mensaje = { error }
           />
         )
       }

@@ -49,28 +49,22 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(3, 0, 2),
     },
     formControl: {
-        margin: theme.spacing(1),
-        minWidth: "100%",
-      },
-      selectEmpty: {
-        marginTop: theme.spacing(2),
-      },
+      marginTop: theme.spacing(1),
+      minWidth: "100%",
+    },
+      // selectEmpty: {
+      //   marginTop: theme.spacing(2),
+      // },
   }));
 
 
 const Registro = ({ formik, error }) => {
     const classes = useStyles();
     const [ showPassword, setShowPassword ] = React.useState(false);
-    const [rol, setRol] = React.useState('');
-    const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-    };
+    const [ rol, setRol ] = React.useState('');
 
-    
-
-    const handleChangeTipo = (event) => {
-        setRol(event.target.value);
-    };
+    const handleClickShowPassword = () => { setShowPassword(!showPassword); };
+    const handleChangeTipo = (event) => { setRol(event.target.value); };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -216,7 +210,7 @@ const Registro = ({ formik, error }) => {
             <Grid container>
               <Grid item xs>
                 <Link to="/login"  style={{textDecorationLine:"none", textDecorationColor:"none"}}variant="body2">
-                    <Typography color="primary"> Ya tienes una cuenta? Inicia Sesion.</Typography> 
+                    <Typography color="primary"> Ya tienes una cuenta? Inicia Sesion.</Typography>
                 </Link>
               </Grid>
             </Grid>
@@ -227,7 +221,7 @@ const Registro = ({ formik, error }) => {
         </Box>
       </Container>
     )
-   
+
 
 }
 

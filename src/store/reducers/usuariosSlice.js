@@ -63,10 +63,17 @@ const usuariosSlice = createSlice({
     builder
       .addCase(loginUsuario.fulfilled, (state, action) => {
           const { auth, ...usuario } = action.payload;
-
           state.status = 'idle';
-          state.auth = auth;
-          state.usuario = usuario;
+
+          if (usuario.tipo === 0) {
+            state.auth = auth;
+            state.usuario = usuario;
+            state.error = ( auth ? null : "Email o clave invalida");
+          } else {
+            state.auth = false;
+            state.usuario = {};
+            state.error = "Solo los usuarios administradores pueden ingresar al panel";
+          }
         })
       .addCase(fetchUsuarios.fulfilled, (state, action) => {
           state.status = 'succeeded';

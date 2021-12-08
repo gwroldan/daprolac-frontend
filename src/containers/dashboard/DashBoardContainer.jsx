@@ -53,65 +53,7 @@ const DashBoardContainer = props => {
     { name: "Sin empezar", value: cantTareasSinComenzar, color: "warning" },
   ];
 
-  const agruparTareasPorUsuario = (ordenes) => {
-    const usuarioTareas = [];
-
-    ordenes.map(orden => {
-      orden.tareas.map(tarea => {
-        let tCompletadas = 0
-        let tPendientes = 0
-        let tSinEmpezar = 0
-
-        if (tarea.fechaInicia != null && tarea.fechaFin != null) tCompletadas++;
-        if (tarea.fechaInicia != null && tarea.fechaFin == null) tPendientes++;
-        if (tarea.fechaInicia == null && tarea.fechaFin == null) tSinEmpezar++;
-
-        let indice = tarea.usuario ?
-            usuarioTareas.findIndex( uTarea => uTarea.idUsuario == tarea.idUsuario) :
-            usuarioTareas.findIndex( uTarea => uTarea.idUsuario == 0)
-
-        if (indice != -1) {
-          if (tarea.fechaInicia != null && tarea.fechaFin != null) usuarioTareas[indice].completadas++;
-          if (tarea.fechaInicia != null && tarea.fechaFin == null) usuarioTareas[indice].pendientes++;
-          if (tarea.fechaInicia == null && tarea.fechaFin == null) usuarioTareas[indice].sinEmpezar++;
-        } else {
-          usuarioTareas.push({
-            name: tarea.usuario ? tarea.usuario.nombre + " " + tarea.usuario.apellido : "Sin Asignar",
-            idUsuario: tarea.usuario ? tarea.idUsuario : 0,
-            completadas: tCompletadas,
-            pendientes: tPendientes,
-            sinEmpezar: tSinEmpezar
-          });
-        }
-      });
-    });
-
-    return usuarioTareas;
-  }
-  const obtenerTareasCalendario = (ordenes) => {
-    const tareasCalendario = [];
-    let id = 0;
-
-    ordenes.map(orden => {
-      orden.tareas.map(tarea => {
-        if (tarea.fechaInicia != null && tarea.fechaFin == null) {
-          tareasCalendario.push({
-            id: id++,
-            idTarea: tarea.idTarea,
-            idUsuario: tarea.idUsuario,
-            title: tarea.nombre + " - Fecha Inicial Propuesta: " +
-                tarea.fechaIniciaProp.substring(0,4) + "-" + tarea.fechaIniciaProp.substring(5,7) + "-" + tarea.fechaIniciaProp.substring(8,10),
-            startDate: new Date(tarea.fechaInicia.substring(0,4), tarea.fechaInicia.substring(5,7) - 1, tarea.fechaInicia.substring(8,10),
-                tarea.fechaInicia.substring(11,13), tarea.fechaInicia.substring(14,16)),
-            members: [tarea.idUsuario]
-          });
-        }
-      });
-    });
-
-    return tareasCalendario
-  }
-  const obtenerAnalisisDeOrdenes = (ordenes, ordenesSinComenzar, ordenesFinalizadas) => {
+  const analisisDeOrdenes = (() => {
     let controlOrdenes = [];
 
     ordenes.map(orden => {
@@ -171,8 +113,66 @@ const DashBoardContainer = props => {
     });
 
     return controlOrdenes;
-  }
-  const usuariosCalendario = (usuarios) => {
+  })();
+  const tareasPorUsuario = (() => {
+    const usuarioTareas = [];
+
+    ordenes.map(orden => {
+      orden.tareas.map(tarea => {
+        let tCompletadas = 0
+        let tPendientes = 0
+        let tSinEmpezar = 0
+
+        if (tarea.fechaInicia != null && tarea.fechaFin != null) tCompletadas++;
+        if (tarea.fechaInicia != null && tarea.fechaFin == null) tPendientes++;
+        if (tarea.fechaInicia == null && tarea.fechaFin == null) tSinEmpezar++;
+
+        let indice = tarea.usuario ?
+            usuarioTareas.findIndex( uTarea => uTarea.idUsuario == tarea.idUsuario) :
+            usuarioTareas.findIndex( uTarea => uTarea.idUsuario == 0)
+
+        if (indice != -1) {
+          if (tarea.fechaInicia != null && tarea.fechaFin != null) usuarioTareas[indice].completadas++;
+          if (tarea.fechaInicia != null && tarea.fechaFin == null) usuarioTareas[indice].pendientes++;
+          if (tarea.fechaInicia == null && tarea.fechaFin == null) usuarioTareas[indice].sinEmpezar++;
+        } else {
+          usuarioTareas.push({
+            name: tarea.usuario ? tarea.usuario.nombre + " " + tarea.usuario.apellido : "Sin Asignar",
+            idUsuario: tarea.usuario ? tarea.idUsuario : 0,
+            completadas: tCompletadas,
+            pendientes: tPendientes,
+            sinEmpezar: tSinEmpezar
+          });
+        }
+      });
+    });
+
+    return usuarioTareas;
+  })();
+  const tareasCalendario = (() => {
+    const tareasCalendario = [];
+    let id = 0;
+
+    ordenes.map(orden => {
+      orden.tareas.map(tarea => {
+        if (tarea.fechaInicia != null && tarea.fechaFin == null) {
+          tareasCalendario.push({
+            id: id++,
+            idTarea: tarea.idTarea,
+            idUsuario: tarea.idUsuario,
+            title: tarea.nombre + " - Fecha Inicial Propuesta: " +
+                tarea.fechaIniciaProp.substring(0,4) + "-" + tarea.fechaIniciaProp.substring(5,7) + "-" + tarea.fechaIniciaProp.substring(8,10),
+            startDate: new Date(tarea.fechaInicia.substring(0,4), tarea.fechaInicia.substring(5,7) - 1, tarea.fechaInicia.substring(8,10),
+                tarea.fechaInicia.substring(11,13), tarea.fechaInicia.substring(14,16)),
+            members: [tarea.idUsuario]
+          });
+        }
+      });
+    });
+
+    return tareasCalendario
+  })();
+  const usuariosCalendario = (() => {
     let usuariosResources = [];
 
     usuarios.map(usuario => {
@@ -191,7 +191,7 @@ const DashBoardContainer = props => {
         instances: usuariosResources
       },
     ];
-  }
+  })();
 
   const statusUsuarios = useSelector(state => state.usuarios.status);
   const statusProcesos = useSelector((state) => state.procesos.status);
@@ -215,10 +215,10 @@ const DashBoardContainer = props => {
         cantTareas = { cantTareas }
         ordenesPorEstado = { ordenesPorEstado }
         tareasPorEstado = { tareasPorEstado }
-        analisisOrdenes = { obtenerAnalisisDeOrdenes(ordenes, ordenesSinComenzar, ordenesFinalizadas) }
-        ordenesTareasCalendario = { obtenerTareasCalendario(ordenes) }
-        resources = { usuariosCalendario(usuarios) }
-        usuarioTareasComponente = { agruparTareasPorUsuario(ordenes) }
+        analisisOrdenes = { analisisDeOrdenes }
+        ordenesTareasCalendario = { tareasCalendario }
+        resources = { usuariosCalendario }
+        usuarioTareasComponente = { tareasPorUsuario }
     />
   );
 };
