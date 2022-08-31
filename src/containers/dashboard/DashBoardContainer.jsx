@@ -99,7 +99,7 @@ const DashBoardContainer = props => {
         if (cantTareasPorOrden === cantTareasFinalizadasPorOrden) porcentaje = 100;
       }
 
-      if (estado !== "completado") {
+      if (estado !== "completado" && porcentaje != 100) {
         controlOrdenes.push({
           nombre: "Orden " + orden.numero,
           idDeLaOrden: orden.id,
