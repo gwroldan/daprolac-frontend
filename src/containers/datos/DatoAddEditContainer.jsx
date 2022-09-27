@@ -73,6 +73,7 @@ const DatoAddEditContainer = (props) => {
     tipo: props.dato ? props.dato.tipo : 'numero',
     minimo: props.dato ? props.dato.minimo : 0,
     maximo: props.dato ? props.dato.maximo : 0,
+    accionCorrectiva: props.dato ? props.dato.accionCorrectiva : '',
     opciones: props.dato ? props.dato.opciones : [],
     obligatorio: props.dato ? props.dato.tarea_dato.obligatorio : false,
     idTarea: props.dato ? props.dato.tarea_dato.idTarea : props.idTarea,
@@ -99,6 +100,7 @@ const DatoAddEditContainer = (props) => {
       tipo: state.tipo,
       minimo: parseFloat(state.minimo.toString()),
       maximo: parseFloat(state.maximo.toString()),
+      accionCorrectiva: state.accionCorrectiva,
       opciones: state.opciones ? state.opciones : [],
       obligatorio: state.obligatorio,
       idTarea: state.idTarea
@@ -274,6 +276,22 @@ const DatoAddEditContainer = (props) => {
               defaultValue = { state.unidadMedida }
               onChange = { handleEditAtributos }
               onFocus = { event => event.target.select() }
+            />
+          </Grid>
+          <Grid>
+            <TextField
+                multiline
+                fullWidth
+                rows = {5}
+                autoComplete = "off"
+                margin = "normal"
+                name = "accionCorrectiva"
+                placeholder = "Accion Correctiva"
+                variant = "outlined"
+                className = { classes.controlEdit }
+                defaultValue = { state.accionCorrectiva }
+                onChange = { handleEditAtributos }
+                onFocus = { event => event.target.select() }
             />
           </Grid>
           <FormControl className = { classes.formControl } >

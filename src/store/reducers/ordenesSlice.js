@@ -22,7 +22,7 @@ export const fetchOrdenes = createAsyncThunk(
   "ordenes/fetchOrdenes",
   async () => {
     const response = await axios.get(
-      "https://daprolac.herokuapp.com/api/v1/ordenes?eager=1"
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/ordenes?eager=1`
     );
     const normalized = normalize(response.data.payload, [ordenEntity]);
     return normalized.entities;
@@ -33,7 +33,7 @@ export const addNewOrden = createAsyncThunk(
   "ordenes/addNewOrden",
   async orden => {
     const response = await axios.post(
-      "https://daprolac.herokuapp.com/api/v1/ordenes",
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/ordenes`,
       orden
     );
     const normalized = normalize(response.data.payload, ordenEntity);
@@ -45,7 +45,7 @@ export const deleteOrden = createAsyncThunk(
   "ordenes/deleteOrden",
   async idOrden => {
     const response = await axios.delete(
-      `https://daprolac.herokuapp.com/api/v1/ordenes/${idOrden}`
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/ordenes/${idOrden}`
     );
     return response.data.payload;
   }

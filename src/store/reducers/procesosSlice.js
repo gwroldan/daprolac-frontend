@@ -44,24 +44,24 @@ const sortTareas = (tareasProceso) => {
 }
 
 export const fetchProcesos = createAsyncThunk("procesos/fetchProcesos", async () => {
-  const response = await axios.get('https://daprolac.herokuapp.com/api/v1/procesos?eager=1');
+  const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/procesos?eager=1`);
   const normalized = normalize(response.data.payload, [procesoEntity]);
   return normalized.entities;
 });
 
 export const addNewProceso = createAsyncThunk("procesos/addNewProceso",async (proceso) => {
-  const response = await axios.post('https://daprolac.herokuapp.com/api/v1/procesos', proceso);
+  const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/procesos`, proceso);
   return response.data.payload;
 });
 
 export const updateProceso = createAsyncThunk("procesos/updateProceso",async (proceso) => {
   const { id, producto } = proceso;
-  const response = await axios.put(`https://daprolac.herokuapp.com/api/v1/procesos/${id}`, { producto });
+  const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/procesos/${id}`, { producto });
   return response.data.payload;
 });
 
 export const deleteProceso = createAsyncThunk("procesos/deleteProceso",async (idProceso) => {
-  const response = await axios.delete(`https://daprolac.herokuapp.com/api/v1/procesos/${idProceso}`);
+  const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/v1/procesos/${idProceso}`);
   return response.data.payload;
 });
 

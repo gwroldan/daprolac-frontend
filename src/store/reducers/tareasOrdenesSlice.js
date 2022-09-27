@@ -18,7 +18,7 @@ export const updateTareaOrden = createAsyncThunk("tareas/updateTareaOrden",async
       }
     ]
   }
-  const response = await axios.put(`https://daprolac.herokuapp.com/api/v1/ordenes/${idOrden}`, tareasOrdenPost);
+  const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/ordenes/${idOrden}`, tareasOrdenPost);
 
   return {
     idOrden: response.data.payload.id,

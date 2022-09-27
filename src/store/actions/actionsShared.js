@@ -10,12 +10,14 @@ export const addNewDatoTarea = createAsyncThunk("datos/addNewDatoTarea",async (d
     tipo,
     minimo,
     maximo,
+    accionCorrectiva,
     opciones,
     obligatorio } = dato;
 
   const datoPost = {
     nombre,
     unidadMedida,
+    accionCorrectiva,
     tipo,
     minimo: tipo === 'numero' ? minimo : 0,
     maximo: tipo === 'numero' ? maximo : 0,
@@ -37,15 +39,17 @@ export const addNewDatoTarea = createAsyncThunk("datos/addNewDatoTarea",async (d
 
   let response;
   if (idDato) {
-    response = await axios.put(`https://daprolac.herokuapp.com/api/v1/datos/${idDato}`, datoPost);
+    console.log(datoPost);
+    response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/datos/${idDato}`, datoPost);
   } else {
-    response = await axios.post(`https://daprolac.herokuapp.com/api/v1/datos`, datoPost);
+    response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/datos`, datoPost);
   }
 
   return {
     id: response.data.payload.id,
     nombre,
     unidadMedida,
+    accionCorrectiva,
     tipo,
     minimo,
     maximo,
@@ -56,7 +60,7 @@ export const addNewDatoTarea = createAsyncThunk("datos/addNewDatoTarea",async (d
 });
 
 export const deleteDatoTarea = createAsyncThunk("datos/deleteDatoTarea",async (idDato) => {
-  const response = await axios.delete(`https://daprolac.herokuapp.com/api/v1/datos/${idDato}`);
+  const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/v1/datos/${idDato}`);
 
   return {
     id: response.data.payload.id,
@@ -98,9 +102,9 @@ export const addNewTareaProceso = createAsyncThunk("tareas/addNewTareaProceso",a
 
   let response;
   if (idTarea) {
-    response = await axios.put(`https://daprolac.herokuapp.com/api/v1/tareas/${idTarea}`, tareaPost);
+    response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/tareas/${idTarea}`, tareaPost);
   } else {
-    response = await axios.post(`https://daprolac.herokuapp.com/api/v1/tareas`, tareaPost);
+    response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/tareas`, tareaPost);
   }
 
   return {
@@ -116,7 +120,7 @@ export const addNewTareaProceso = createAsyncThunk("tareas/addNewTareaProceso",a
 });
 
 export const deleteTareaProceso = createAsyncThunk("tareas/deleteTareaProceso",async (idTarea) => {
-  const response = await axios.delete(`https://daprolac.herokuapp.com/api/v1/tareas/${idTarea}`);
+  const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/v1/tareas/${idTarea}`);
 
   return {
     id: response.data.payload.id,

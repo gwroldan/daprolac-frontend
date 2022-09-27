@@ -10,7 +10,7 @@ const tareasAdapter = createEntityAdapter();
 
 export const updateTarea = createAsyncThunk("tareas/updateTarea",async (tarea) => {
   const { id, nombre, observaciones } = tarea;
-  const response = await axios.put(`https://daprolac.herokuapp.com/api/v1/tareas/${id}`, { nombre, observaciones });
+  const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/tareas/${id}`, { nombre, observaciones });
   return response.data.payload;
 });
 

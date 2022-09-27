@@ -17,12 +17,12 @@ export const slice = createSlice({
       datosAdapter.upsertMany(state, datos);
     },
     [addNewDatoTarea.fulfilled]: (state, action) => {
-      const { id, nombre, unidadMedida, tipo, minimo, maximo, opciones } = action.payload;
+      const { id, nombre, unidadMedida, accionCorrectiva, tipo, minimo, maximo, opciones } = action.payload;
       const datoExistente = state.entities[id];
       if (datoExistente) {
-        datosAdapter.updateOne(state, { id, changes: { nombre, unidadMedida, tipo, minimo, maximo, opciones }});
+        datosAdapter.updateOne(state, { id, changes: { nombre, unidadMedida, accionCorrectiva, tipo, minimo, maximo, opciones }});
       } else {
-        datosAdapter.addOne(state, { id, nombre, unidadMedida, tipo, minimo, maximo, opciones });
+        datosAdapter.addOne(state, { id, nombre, unidadMedida, accionCorrectiva, tipo, minimo, maximo, opciones });
       }
     },
     [deleteDatoTarea.fulfilled]: (state, action) => { datosAdapter.removeOne(state, action.payload.id); },

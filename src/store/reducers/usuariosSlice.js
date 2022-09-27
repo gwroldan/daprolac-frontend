@@ -17,23 +17,23 @@ const initialState = usuariosAdapter.getInitialState({
 });
 
 export const fetchUsuarios = createAsyncThunk("usuarios/fetchUsuarios", async () => {
-  const response = await axios.get('https://daprolac.herokuapp.com/api/v1/usuarios?eager=1');
+  const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/usuarios?eager=1`);
   const normalized = normalize(response.data.payload, [usuarioEntity]);
   return normalized.entities;
 });
 
 export const loginUsuario = createAsyncThunk("usuarios/loginUsuario",async (credenciales) => {
-  const response = await axios.post(`https://daprolac.herokuapp.com/api/v1/usuarios/login`, credenciales);
+  const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/usuarios/login`, credenciales);
   return response.data.payload;
 });
 
 export const addNewUsuario = createAsyncThunk("usuarios/addNewUsuario",async (usuario) => {
-  const response = await axios.post('https://daprolac.herokuapp.com/api/v1/usuarios', usuario);
+  const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/usuarios`, usuario);
   return response.data.payload;
 });
 
 export const deleteUsuario = createAsyncThunk("usuarios/deleteUsuario",async (idUsuario) => {
-  const response = await axios.delete(`https://daprolac.herokuapp.com/api/v1/procesos/${idUsuario}`);
+  const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/v1/procesos/${idUsuario}`);
   return response.data.payload;
 });
 
