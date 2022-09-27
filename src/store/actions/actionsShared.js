@@ -39,7 +39,6 @@ export const addNewDatoTarea = createAsyncThunk("datos/addNewDatoTarea",async (d
 
   let response;
   if (idDato) {
-    console.log(datoPost);
     response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/datos/${idDato}`, datoPost);
   } else {
     response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/datos`, datoPost);
