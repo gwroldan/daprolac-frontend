@@ -167,7 +167,7 @@ const ProcesoDetalle = ({ proceso, tareas, ...props }) => {
           />
         }
       </div>
-      <div style={{ marginTop: "10px" }}>
+      {/* <div style={{ marginTop: "10px" }}>
         <Button
           variant = "contained"
           color = "primary"
@@ -176,7 +176,7 @@ const ProcesoDetalle = ({ proceso, tareas, ...props }) => {
         >
           Crear Orden de Produccion
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 }
