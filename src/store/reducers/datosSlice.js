@@ -1,4 +1,4 @@
-import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
+import { createSlice, createEntityAdapter,createSelector } from "@reduxjs/toolkit";
 
 import { addNewDatoTarea, deleteDatoTarea } from "../actions/actionsShared";
 
@@ -40,3 +40,10 @@ export const {
   selectAll: selectAllDatos,
   selectTotal: selectTotalDatos
 } = datosAdapter.getSelectors((state) => state.datos);
+
+export const selectDatosSinRepetir = createSelector(
+  [selectAllDatos],
+  (datos) => datos.filter((dato1,i,a)=>a.findIndex(dato2=>(dato2.nombre.toLowerCase()===dato1.nombre.toLowerCase() && dato1.tipo=="numero"))===i)
+  
+);
+

@@ -11,7 +11,13 @@ import {
   selectOrdenesSinComenzar,
   selectOrdenesFinalizadas,
   selectOrdenesWithNested,
+  selectOrdenesWithNestedwithDatos
 } from "../../store/reducers/ordenesSlice";
+
+
+import {
+  selectDatosSinRepetir
+} from "../../store/reducers/datosSlice"
 
 import {
   selectAllTareasOrdenes,
@@ -35,7 +41,11 @@ const DashBoardContainer = props => {
   const ordenesSinComenzar = useSelector(selectOrdenesSinComenzar)
   const cantOrdenesSinComenzar = ordenesSinComenzar.length;
   const ordenes = useSelector(selectOrdenesWithNested);
+  const ordenesWithDatos = useSelector(selectOrdenesWithNestedwithDatos);
   const usuarios = useSelector(selectAllUsarios);
+  const datosSinRepetir = useSelector(selectDatosSinRepetir)
+
+  console.log("DATOS",datosSinRepetir)
 
   const ordenesPorEstado = [
     { name: "Terminadas", value: cantOrdenesFinalizadas, color: "success" },
@@ -52,6 +62,11 @@ const DashBoardContainer = props => {
     { name: "Pendientes", value: cantTareas - cantTareasFinalizadas - cantTareasSinComenzar, color: "error" },
     { name: "Sin empezar", value: cantTareasSinComenzar, color: "warning" },
   ];
+
+  console.log("ordenes",ordenesWithDatos)
+
+ 
+
 
   const analisisDeOrdenes = (() => {
     let controlOrdenes = [];
@@ -212,7 +227,9 @@ const DashBoardContainer = props => {
   return (
     <DashBoard
         cantOrdenes = { cantOrdenes }
+        ordenesWithDatos={ordenesWithDatos}
         cantTareas = { cantTareas }
+        datosSinRepetir={datosSinRepetir}
         ordenesPorEstado = { ordenesPorEstado }
         tareasPorEstado = { tareasPorEstado }
         analisisOrdenes = { analisisDeOrdenes }

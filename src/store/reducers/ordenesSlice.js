@@ -113,6 +113,56 @@ export const selectOrdenesWithNested = createSelector(
     }
 )
 
+export const selectOrdenesWithNestedwithDatos = createSelector(
+  [
+    selectAllOrdenes,
+    (state) => state.procesos.ids.map((id) => state.procesos.entities[id]),
+    (state) => state.tareasOrdenes.ids.map((id) => state.tareasOrdenes.entities[id]),
+    (state) => state.usuarios.ids.map((id) => state.usuarios.entities[id]),
+    (state) => state.tareas.ids.map((id) => state.tareas.entities[id]),
+    (state) => state.datos.ids.map((id) => state.datos.entities[id]),
+  ],
+  (ordenes, procesos, tareasOrdenes, usuarios, tareas,datos) => {
+    return ordenes.map(orden => {
+      let tareasOrden = tareasOrdenes.filter(tarea => parseInt(tarea.idOrden) === parseInt(orden.id));
+      let tOrden = tareasOrden.sort((tA, tB) => new Date(tA.fechaIniciaProp) - new Date(tB.fechaIniciaProp));
+
+      const datosOrden = []
+        tOrden.forEach( tarea => {
+            const tareaOrden = {
+              ...tarea,
+              tarea: tareas.filter(t => parseInt(t.id) === parseInt(tarea.idTarea)).pop(),
+              usuario: tarea.idUsuario
+                  ? usuarios.filter( u => parseInt(u.id) === parseInt(tarea.idUsuario)).pop()
+                  : null
+            };
+
+           
+            if (tareaOrden.datos && tareaOrden.datos.length) {
+              tareaOrden.datos.forEach( datoO => {
+                const dato = datos.filter( d => parseInt(d.id) === parseInt(datoO.idDato)).pop();
+                const datoOrden = {
+                  ...datoO,
+                  nombre: dato.nombre,
+                  unidadMedida: dato.unidadMedida,
+                  minimo: dato.minimo,
+                  maximo: dato.maximo,
+                }
+                datosOrden.push(datoOrden);
+              });
+            }
+
+            tareaOrden.datos = datosOrden;
+          });
+
+      return {
+        ...orden,
+        datos:datosOrden
+      }
+    });
+  }
+)
+
 export const selectOrdenesSinComenzar = createSelector(
     [
       (state) => state.ordenes.ids.map((id) => state.ordenes.entities[id]),
